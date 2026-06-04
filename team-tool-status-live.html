@@ -202,8 +202,8 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
     b.classList.toggle('active', (tab==='main'&&i===0)||(tab==='log'&&i===1))
   );
-  document.getElementById('mainSection').style.display = tab==='main' ? '' : 'none';
-  document.getElementById('logSection').style.display  = tab==='log'  ? '' : 'none';
+  document.getElementById('mainSection').style.display = tab==='main' ? 'block' : 'none';
+  document.getElementById('logSection').style.display  = tab==='log'  ? 'block' : 'none';
   if (tab==='log') loadLog();
 }
 
