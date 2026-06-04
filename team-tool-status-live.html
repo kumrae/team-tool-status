@@ -8,55 +8,39 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  background: #f0f4f8;
-  min-height: 100vh;
-  padding: 20px;
+  background: #f0f4f8; min-height: 100vh; padding: 20px;
 }
-.header {
-  background: #0d7c6e;
-  color: white;
-  border-radius: 16px;
-  padding: 20px 24px;
-  margin-bottom: 12px;
-}
+.header { background: #0d7c6e; color: white; border-radius: 16px; padding: 20px 24px; margin-bottom: 12px; }
 .header h1 { font-size: 1.3rem; font-weight: 700; }
 .header .time { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
-
-/* 탭 */
 .tabs { display:flex; gap:8px; margin-bottom:16px; }
 .tab-btn {
   flex:1; padding:12px; border-radius:12px; border:2px solid #e2e6ea;
-  background:white; font-size:0.95rem; font-weight:700; cursor:pointer; color:#555;
-  transition:all 0.2s;
+  background:white; font-size:0.95rem; font-weight:700; cursor:pointer; color:#555; transition:all 0.2s;
 }
 .tab-btn.active { background:#0d7c6e; border-color:#0d7c6e; color:white; }
-
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
+.card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 .card h2 { font-size: 0.95rem; color: #555; margin-bottom: 12px; font-weight: 600; }
-
 .name-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
 .name-btn {
   padding: 10px 20px; border-radius: 100px; border: 2px solid #e2e6ea;
-  background: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; color: #444;
-  transition: all 0.2s;
+  background: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; color: #444; transition: all 0.2s;
 }
 .name-btn.selected { background: #0d7c6e; border-color: #0d7c6e; color: white; }
 
+/* 툴 그룹 */
+.tool-group { margin-bottom: 14px; }
+.tool-group-label {
+  font-size: 0.78rem; font-weight: 700; color: #888;
+  margin-bottom: 6px; padding-left: 2px; letter-spacing: 0.5px;
+}
 .tools-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: 10px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px;
 }
 .tool-btn {
-  padding: 14px 8px; border-radius: 12px; border: 2px solid #e2e6ea;
+  padding: 12px 8px; border-radius: 12px; border: 2px solid #e2e6ea;
   background: white; font-size: 1rem; font-weight: 700; cursor: pointer; color: #444;
-  text-align: center; transition: all 0.2s; min-height: 52px;
+  text-align: center; transition: all 0.2s; min-height: 48px;
   display: flex; align-items: center; justify-content: center;
 }
 .tool-btn.selected { background: #e6f7f4; border-color: #0d7c6e; color: #0d7c6e; }
@@ -69,71 +53,43 @@ body {
 }
 .submit-btn:hover { background: #0a6458; }
 .submit-btn:disabled { background: #ccc; cursor: not-allowed; }
-
 .reset-btn {
   width: 100%; padding: 12px; background: #fff0f0; color: #e53e3e; border: none;
-  border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
-  margin-bottom: 16px; transition: background 0.2s;
+  border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: 16px;
 }
 .reset-btn:hover { background: #ffe0e0; }
-
-.member-row {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px 0; border-bottom: 1px solid #f0f0f0;
-}
+.member-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
 .member-row:last-child { border-bottom: none; }
 .avatar {
   width: 38px; height: 38px; border-radius: 50%; background: #0d7c6e; color: white;
-  font-weight: 700; font-size: 0.9rem;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .member-name { font-weight: 700; font-size: 0.95rem; color: #222; margin-bottom: 6px; }
 .tool-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tool-tag {
-  background: #e6f7f4; color: #0d7c6e; border-radius: 100px;
-  padding: 3px 10px; font-size: 0.8rem; font-weight: 600;
-}
+.tool-tag { background: #e6f7f4; color: #0d7c6e; border-radius: 100px; padding: 3px 10px; font-size: 0.8rem; font-weight: 600; }
 .no-tool { color: #bbb; font-size: 0.85rem; }
-
 .guide {
   background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
-  padding: 12px 16px; font-size: 0.82rem; color: #92400e; margin-bottom: 16px;
-  line-height: 1.6;
+  padding: 12px 16px; font-size: 0.82rem; color: #92400e; margin-bottom: 16px; line-height: 1.6;
 }
-
-/* 로그 */
-#logSection { display:none; }
 .log-refresh-btn {
   width:100%; padding:12px; background:#f0f4f8; color:#555; border:none;
   border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; margin-bottom:12px;
 }
 .log-refresh-btn:hover { background:#e2e6ea; }
 .log-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
-.log-table th {
-  background:#f0f4f8; padding:10px 8px; text-align:left;
-  font-weight:700; color:#555; border-bottom:2px solid #e2e6ea;
-}
+.log-table th { background:#f0f4f8; padding:10px 8px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e2e6ea; }
 .log-table td { padding:10px 8px; border-bottom:1px solid #f0f0f0; color:#333; vertical-align:middle; }
 .log-table tr:last-child td { border-bottom:none; }
-.log-tool-tag {
-  background:#e6f7f4; color:#0d7c6e; border-radius:100px;
-  padding:2px 8px; font-size:0.78rem; font-weight:600; display:inline-block; margin:2px 2px;
-}
+.log-tool-tag { background:#e6f7f4; color:#0d7c6e; border-radius:100px; padding:2px 8px; font-size:0.78rem; font-weight:600; display:inline-block; margin:2px; }
 .log-empty { text-align:center; color:#bbb; padding:30px; font-size:0.9rem; }
-
-/* 공통 */
 .loading { text-align:center; color:#999; padding:30px; font-size:0.9rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.spinner {
-  display: inline-block; width: 16px; height: 16px;
-  border: 2px solid #e2e6ea; border-top-color: #0d7c6e; border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
+.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #e2e6ea; border-top-color: #0d7c6e; border-radius: 50%; animation: spin 0.7s linear infinite; }
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
   background: #222; color: white; padding: 12px 24px; border-radius: 100px;
-  font-size: 0.9rem; font-weight: 600; opacity: 0;
-  transition: all 0.3s; z-index: 999; white-space: nowrap;
+  font-size: 0.9rem; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -145,40 +101,33 @@ body {
   <div class="time" id="currentTime"></div>
 </div>
 
-<!-- 탭 버튼 -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('main')">📋 현황</button>
   <button class="tab-btn" onclick="switchTab('log')">📜 변경로그</button>
 </div>
 
-<!-- 현황 탭 -->
 <div id="mainSection">
   <div class="guide">
     ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 저장하기<br>
     반납 시: 해당 툴 체크 해제 → 저장하기
   </div>
-
   <div class="card">
     <h2>👤 내 이름</h2>
     <div class="name-buttons" id="nameButtons"></div>
   </div>
-
   <div class="card">
     <h2>🔧 사용 중인 툴 선택</h2>
-    <div class="tools-grid" id="toolsGrid"></div>
+    <div id="toolsGrid"></div>
   </div>
-
   <button class="submit-btn" id="submitBtn" onclick="submitStatus()" disabled>저장하기</button>
   <button class="reset-btn" onclick="resetMyStatus()">🔄 내 상태 초기화</button>
-
   <div class="card">
     <h2>📊 팀 현황판 <span style="font-size:0.8rem;color:#aaa;font-weight:400;margin-left:6px">30초마다 자동갱신</span></h2>
     <div id="statusBoard"><div class="loading"><span class="spinner"></span> 불러오는 중...</div></div>
   </div>
 </div>
 
-<!-- 변경로그 탭 -->
-<div id="logSection">
+<div id="logSection" style="display:none">
   <button class="log-refresh-btn" onclick="loadLog()">🔄 로그 새로고침</button>
   <div class="card">
     <h2>📜 변경 기록 (최신순)</h2>
@@ -190,14 +139,21 @@ body {
 
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwabeW5BO3eIdd_SAn0MGs-XO7TmXmpzy1IyOmToe3WSGwMfz7R_1zw2Y9eU50KqPZ2/exec";
-const MEMBERS = ["정철환", "정수철", "최금래", "오현석", "정태석", "엄병준", "이진한", "박진만", "김성진", "이준명"];
-const TOOLS   = ["SV1","SV2","S1","S2","D1","D7","N1","N2","NV1","NV2"];
+const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","엄병준","이진한","박진만","김성진","이준명"];
+
+// ★ 그룹별 툴 정의
+const TOOL_GROUPS = [
+  { label: "SV 장비", tools: ["SV1","SV2"] },
+  { label: "S 장비",  tools: ["S1","S2"] },
+  { label: "D 장비",  tools: ["D1","D7"] },
+  { label: "N 장비",  tools: ["N1","N2","NV1","NV2"] },
+];
+const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
 
 let myName  = "";
 let myTools = [];
 let boardData = {};
 
-// ── 탭 전환
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
     b.classList.toggle('active', (tab==='main'&&i===0)||(tab==='log'&&i===1))
@@ -207,7 +163,6 @@ function switchTab(tab) {
   if (tab==='log') loadLog();
 }
 
-// ── 이름 버튼
 function renderNames() {
   document.getElementById("nameButtons").innerHTML = MEMBERS.map(m =>
     `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
@@ -222,11 +177,17 @@ function selectName(name) {
   document.getElementById("submitBtn").disabled = false;
 }
 
-// ── 툴 버튼
 function renderTools() {
-  document.getElementById("toolsGrid").innerHTML = TOOLS.map(t =>
-    `<button class="tool-btn ${myTools.includes(t)?"selected":""}" onclick="toggleTool('${t}')">${t}</button>`
-  ).join("");
+  document.getElementById("toolsGrid").innerHTML = TOOL_GROUPS.map(group => `
+    <div class="tool-group">
+      <div class="tool-group-label">${group.label}</div>
+      <div class="tools-grid">
+        ${group.tools.map(t =>
+          `<button class="tool-btn ${myTools.includes(t)?"selected":""}" onclick="toggleTool('${t}')">${t}</button>`
+        ).join("")}
+      </div>
+    </div>
+  `).join("");
 }
 
 function toggleTool(tool) {
@@ -235,33 +196,26 @@ function toggleTool(tool) {
   renderTools();
 }
 
-// ── 저장
 async function submitStatus() {
   if (!myName) { showToast("이름을 선택하세요!"); return; }
   const btn = document.getElementById("submitBtn");
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>저장 중...';
   try {
-   fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
+    fetch(GAS_URL, {
+      method: "POST", mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ name: myName, tools: myTools })
     });
     boardData[myName] = [...myTools];
     renderBoard();
     showToast(`✅ ${myName} 저장 완료!`);
-  } catch(e) {
-    showToast("❌ 저장 실패. URL을 확인하세요.");
-  }
+  } catch(e) { showToast("❌ 저장 실패."); }
   btn.disabled = false;
   btn.innerHTML = "저장하기";
 }
 
-// ── 불러오기
 async function loadStatus() {
-  document.getElementById("statusBoard").innerHTML =
-    '<div class="loading"><span class="spinner"></span> 불러오는 중...</div>';
   try {
     const res = await fetch(GAS_URL + "?action=get");
     const data = await res.json();
@@ -270,12 +224,10 @@ async function loadStatus() {
     renderTools();
     renderBoard();
   } catch(e) {
-    document.getElementById("statusBoard").innerHTML =
-      '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
+    document.getElementById("statusBoard").innerHTML = '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
   }
 }
 
-// ── 현황판 렌더
 function renderBoard() {
   document.getElementById("statusBoard").innerHTML = MEMBERS.map(m => {
     const tools = boardData[m] || [];
@@ -285,35 +237,28 @@ function renderBoard() {
         <div style="flex:1;">
           <div class="member-name">${m}</div>
           <div class="tool-tags">
-            ${tools.length
-              ? tools.map(t=>`<span class="tool-tag">${t}</span>`).join("")
-              : '<span class="no-tool">사용 중인 툴 없음</span>'}
+            ${tools.length ? tools.map(t=>`<span class="tool-tag">${t}</span>`).join("") : '<span class="no-tool">사용 중인 툴 없음</span>'}
           </div>
         </div>
       </div>`;
   }).join("");
 }
 
-// ── 초기화
 async function resetMyStatus() {
   if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
   if (!confirm(`${myName}의 상태를 초기화할까요?`)) return;
   myTools = [];
   renderTools();
-  try {
-    fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ name: myName, tools: myTools })
-    });
-    boardData[myName] = [];
-    renderBoard();
-    showToast(`🔄 ${myName} 초기화 완료`);
-  } catch(e) { showToast("❌ 초기화 실패"); }
+  fetch(GAS_URL, {
+    method: "POST", mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify({ name: myName, tools: [] })
+  });
+  boardData[myName] = [];
+  renderBoard();
+  showToast(`🔄 ${myName} 초기화 완료`);
 }
 
-// ── 로그 불러오기
 async function loadLog() {
   document.getElementById('logBoard').innerHTML = '<div class="log-empty"><span class="spinner"></span> 불러오는 중...</div>';
   try {
@@ -324,10 +269,11 @@ async function loadLog() {
       return;
     }
     const rows = [...data.logs].reverse().map(row => {
+      const dateStr = row[0] ? new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"}) : "-";
       const tools = row[2] && row[2] !== '없음'
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
         : '<span style="color:#bbb">없음</span>';
-      return `<tr><td style="white-space:nowrap">${new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"})}</td><td><strong>${row[1]}</strong></td><td>${tools}</td></tr>`;
+      return `<tr><td style="white-space:nowrap">${dateStr}</td><td><strong>${row[1]}</strong></td><td>${tools}</td></tr>`;
     }).join('');
     document.getElementById('logBoard').innerHTML = `
       <div style="overflow-x:auto">
@@ -353,7 +299,6 @@ function updateTime() {
 
 setInterval(loadStatus, 30000);
 setInterval(updateTime, 1000);
-
 renderNames();
 renderTools();
 loadStatus();
