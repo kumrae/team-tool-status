@@ -44,7 +44,10 @@ body {
   display: flex; align-items: center; justify-content: center;
 }
 .tool-btn.selected { background: #e6f7f4; border-color: #0d7c6e; color: #0d7c6e; }
-
+.tool-btn.used-by-other {
+  background: #f5f5f5; border-color: #ddd; color: #bbb;
+  cursor: not-allowed; opacity: 0.6;
+}
 .submit-btn {
   width: 100%; padding: 16px; background: #0d7c6e; color: white; border: none;
   border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
@@ -177,13 +180,29 @@ function selectName(name) {
 }
 
 function renderTools() {
+  const usedByOthers = {};
+  MEMBERS.forEach(m => {
+    if (m === myName) return;
+    (boardData[m] || []).forEach(t => {
+      usedByOthers[t] = m;
+    });
+  });
+
   document.getElementById("toolsGrid").innerHTML = TOOL_GROUPS.map(group => `
     <div class="tool-group">
       <div class="tool-group-label">${group.label}</div>
       <div class="tools-grid">
-        ${group.tools.map(t =>
-          `<button class="tool-btn ${myTools.includes(t)?"selected":""}" onclick="toggleTool('${t}')">${t}</button>`
-        ).join("")}
+        ${group.tools.map(t => {
+          const other = usedByOthers[t];
+          const isSelected = myTools.includes(t);
+          const isUsed = other && !isSelected;
+          return `<button
+            class="tool-btn ${isSelected ? 'selected' : ''} ${isUsed ? 'used-by-other' : ''}"
+            onclick="toggleTool('${t}')"
+            ${isUsed ? 'disabled' : ''}
+            title="${isUsed ? other + ' 사용 중' : ''}"
+          >${t}${isUsed ? `<br><span style="font-size:0.65rem;font-weight:400">${other}</span>` : ''}</button>`;
+        }).join("")}
       </div>
     </div>
   `).join("");
