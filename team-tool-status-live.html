@@ -327,7 +327,7 @@ async function loadLog() {
       const tools = row[2] && row[2] !== '없음'
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
         : '<span style="color:#bbb">없음</span>';
-      return `<tr><td style="white-space:nowrap">${row[0]}</td><td><strong>${row[1]}</strong></td><td>${tools}</td></tr>`;
+      return `<tr><td style="white-space:nowrap">${new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"})}</td><td><strong>${row[1]}</strong></td><td>${tools}</td></tr>`;
     }).join('');
     document.getElementById('logBoard').innerHTML = `
       <div style="overflow-x:auto">
