@@ -243,8 +243,8 @@ async function submitStatus() {
   btn.innerHTML = '<span class="spinner"></span>저장 중...';
   try {
     await fetch(GAS_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ name: myName, tools: myTools })
     });
     boardData[myName] = [...myTools];
@@ -301,8 +301,8 @@ async function resetMyStatus() {
   renderTools();
   try {
     await fetch(GAS_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ name: myName, tools: [] })
     });
     boardData[myName] = [];
