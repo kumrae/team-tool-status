@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>팀 툴 사용 현황</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  background: #f0f4f8;
+  min-height: 100vh;
+  padding: 20px;
+}
+.header {
+  background: #0d7c6e;
+  color: white;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.header h1 { font-size: 1.3rem; font-weight: 700; }
+.header .time { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.card h2 { font-size: 0.95rem; color: #555; margin-bottom: 12px; font-weight: 600; }
+
+.name-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+.name-btn {
+  padding: 10px 20px;
+  border-radius: 100px;
+  border: 2px solid #e2e6ea;
+  background: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #444;
+  transition: all 0.2s;
+}
+.name-btn.selected { background: #0d7c6e; border-color: #0d7c6e; color: white; }
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+}
+.tool-btn {
+  padding: 14px 8px;
+  border-radius: 12px;
+  border: 2px solid #e2e6ea;
+  background: white;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: #444;
+  text-align: center;
+  transition: all 0.2s;
+  min-height: 52px;
+  display: flex; align-items: center; justify-content: center;
+}
+.tool-btn.selected { background: #e6f7f4; border-color: #0d7c6e; color: #0d7c6e; }
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: #0d7c6e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.submit-btn:hover { background: #0a6458; }
+.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+.member-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.member-row:last-child { border-bottom: none; }
+.avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: #0d7c6e;
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.member-name { font-weight: 700; font-size: 0.95rem; color: #222; margin-bottom: 6px; }
+.tool-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tool-tag {
+  background: #e6f7f4; color: #0d7c6e;
+  border-radius: 100px;
+  padding: 3px 10px;
+  font-size: 0.8rem; font-weight: 600;
+}
+.no-tool { color: #bbb; font-size: 0.85rem; }
+
+.guide {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.82rem;
+  color: #92400e;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: #1a1a1a; color: white;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: 0.9rem; font-weight: 600;
+  transition: transform 0.3s;
+  z-index: 999; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid #e2e6ea;
+  border-top-color: #0d7c6e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.reset-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.reset-btn:hover { color: #e53e3e; border-color: #e53e3e; }
+
+.refresh-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.refresh-btn {
+  background: #f0f4f8; border: none;
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 0.8rem; color: #0d7c6e;
+  cursor: pointer; font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🔧 팀 툴 사용 현황</h1>
+  <div class="time" id="currentTime"></div>
+</div>
+
+<div class="guide">
+  💡 <strong>사용법:</strong> ① 내 이름 선택 → ② 사용 중인 툴 선택 → ③ 저장
+</div>
+
+<!-- 이름 선택 -->
+<div class="card">
+  <h2>👤 내 이름을 선택하세요</h2>
+  <div class="name-buttons" id="nameButtons"></div>
+</div>
+
+<!-- 툴 선택 -->
+<div class="card">
+  <h2>🛠️ 현재 사용 중인 툴 (복수 선택 가능)</h2>
+  <div class="tools-grid" id="toolsGrid"></div>
+</div>
+
+<button class="submit-btn" id="submitBtn" onclick="submitStatus()" disabled>
+  저장하기
+</button>
+
+<!-- 현황판 -->
+<div class="card">
+  <div class="refresh-row">
+    <h2 style="margin-bottom:0;">📊 팀 전체 현황</h2>
+    <button class="refresh-btn" onclick="loadStatus()">🔄 새로고침</button>
+  </div>
+  <div id="statusBoard"><div class="loading"><span class="spinner"></span>불러오는 중...</div></div>
+</div>
+
+<button class="reset-btn" onclick="resetMyStatus()">내 상태 초기화</button>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ★★★ 여기에 Google Apps Script 배포 URL을 붙여넣으세요 ★★★
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwMs7fM0X7LbgHUhsXliJMXWlqT94iR65zl9RLZBEhYrenUu76Bq1Sk1a3BTqxdJVnS/exec";
+
+const MEMBERS = ["최금래", "오현석", "김태훈", "이진한"];
+const TOOLS   = ["SV1","SV2","S1","S2","D1","D7","N1","N2","NV1","NV2"];
+
+let myName  = "";
+let myTools = [];
+let boardData = {};
+
+// ── 이름 버튼
+function renderNames() {
+  document.getElementById("nameButtons").innerHTML = MEMBERS.map(m =>
+    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
+  ).join("");
+}
+
+function selectName(name) {
+  myName = name;
+  myTools = [...(boardData[name] || [])];
+  renderNames();
+  renderTools();
+  document.getElementById("submitBtn").disabled = false;
+}
+
+// ── 툴 버튼
+function renderTools() {
+  document.getElementById("toolsGrid").innerHTML = TOOLS.map(t =>
+    `<button class="tool-btn ${myTools.includes(t)?"selected":""}" onclick="toggleTool('${t}')">${t}</button>`
+  ).join("");
+}
+
+function toggleTool(tool) {
+  if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
+  myTools = myTools.includes(tool) ? myTools.filter(t=>t!==tool) : [...myTools, tool];
+  renderTools();
+}
+
+// ── 저장 → GAS로 POST
+async function submitStatus() {
+  if (!myName) { showToast("이름을 선택하세요!"); return; }
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>저장 중...';
+
+  try {
+    await fetch(GAS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: myName, tools: myTools })
+    });
+    boardData[myName] = [...myTools];
+    renderBoard();
+    showToast(`✅ ${myName} 저장 완료!`);
+  } catch(e) {
+    showToast("❌ 저장 실패. URL을 확인하세요.");
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = "저장하기";
+}
+
+// ── 불러오기 → GAS GET
+async function loadStatus() {
+  document.getElementById("statusBoard").innerHTML =
+    '<div class="loading"><span class="spinner"></span>불러오는 중...</div>';
+  try {
+    const res = await fetch(GAS_URL + "?action=get");
+    const data = await res.json();
+    boardData = data;
+    if (myName) myTools = [...(boardData[myName] || [])];
+    renderTools();
+    renderBoard();
+  } catch(e) {
+    document.getElementById("statusBoard").innerHTML =
+      '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.<br>GAS URL을 확인하세요.</div>';
+  }
+}
+
+// ── 현황판 렌더
+function renderBoard() {
+  document.getElementById("statusBoard").innerHTML = MEMBERS.map(m => {
+    const tools = boardData[m] || [];
+    return `
+      <div class="member-row">
+        <div class="avatar">${m.charAt(0)}</div>
+        <div style="flex:1;">
+          <div class="member-name">${m}</div>
+          <div class="tool-tags">
+            ${tools.length
+              ? tools.map(t=>`<span class="tool-tag">${t}</span>`).join("")
+              : '<span class="no-tool">사용 중인 툴 없음</span>'}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ── 초기화
+async function resetMyStatus() {
+  if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
+  if (!confirm(`${myName}의 상태를 초기화할까요?`)) return;
+  myTools = [];
+  renderTools();
+  try {
+    await fetch(GAS_URL, {
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: myName, tools: [] })
+    });
+    boardData[myName] = [];
+    renderBoard();
+    showToast(`🔄 ${myName} 초기화 완료`);
+  } catch(e) { showToast("❌ 초기화 실패"); }
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function updateTime() {
+  document.getElementById("currentTime").textContent =
+    new Date().toLocaleDateString("ko-KR") + " " + new Date().toLocaleTimeString("ko-KR");
+}
+
+// ── 자동 새로고침 (30초)
+setInterval(loadStatus, 30000);
+setInterval(updateTime, 1000);
+
+renderNames();
+renderTools();
+loadStatus();
+updateTime();
+</script>
+</body>
+</html>
