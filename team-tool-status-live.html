@@ -123,7 +123,16 @@ body {
     <h2>🔧 사용 중인 툴 선택</h2>
     <div id="toolsGrid"></div>
   </div>
-  <button class="submit-btn" id="submitBtn" onclick="submitStatus()" disabled>저장하기</button>
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    <button class="submit-btn" id="submitBtn" onclick="submitStatus('출고')" disabled
+      style="background:#0d7c6e;margin-bottom:0">
+      📤 출고
+    </button>
+    <button class="submit-btn" id="returnBtn" onclick="submitStatus('반납')" disabled
+      style="background:#e53e3e;margin-bottom:0">
+      📥 반납
+    </button>
+  </div>
   <button class="reset-btn" onclick="resetMyStatus()">🔄 내 상태 초기화</button>
   <div class="card">
     <h2>📊 팀 현황판 <span style="font-size:0.8rem;color:#aaa;font-weight:400;margin-left:6px">30초마다 자동갱신</span></h2>
@@ -255,6 +264,7 @@ function selectName(name) {
   renderNames();
   renderTools();
   document.getElementById("submitBtn").disabled = false;
+  document.getElementById("returnBtn").disabled = false;
 }
 
 function renderTools() {
