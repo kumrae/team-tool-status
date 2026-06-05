@@ -173,7 +173,9 @@ body {
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwabeW5BO3eIdd_SAn0MGs-XO7TmXmpzy1IyOmToe3WSGwMfz7R_1zw2Y9eU50KqPZ2/exec";
 const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","엄병준","이진한","박진만","김성진","이준명"];
 const EXTRA_MEMBERS = ["홍승한","조원주","이윤모","김윤성","이태일","서인석","이재룡","전대수","장승혁","박수환","최상원"];
-const ALL_MEMBERS = [...MEMBERS, ...EXTRA_MEMBERS];
+const STATUS_MEMBERS = ["🔧 수리중","⚠️ 점검필요"];
+const ALL_MEMBERS = [...MEMBERS, ...EXTRA_MEMBERS, ...STATUS_MEMBERS];
+
 
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","SV1","SV2","96MPH"] },
@@ -255,8 +257,12 @@ function renderNames() {
     ${showExtra ? "▲ 접기" : "▼ 더보기..."}
   </button>`;
 
-  document.getElementById("nameButtons").innerHTML = mainBtns + toggleBtn + extraBtns;
-}
+  const statusBtns = STATUS_MEMBERS.map(m =>
+    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
+  ).join("");
+
+  document.getElementById("nameButtons").innerHTML = mainBtns + toggleBtn + extraBtns + `<br style="width:100%">` + statusBtns;
+  }
 
 function selectName(name) {
   myName = name;
