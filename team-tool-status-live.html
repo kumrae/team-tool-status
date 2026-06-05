@@ -27,27 +27,17 @@ body {
   background: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; color: #444; transition: all 0.2s;
 }
 .name-btn.selected { background: #0d7c6e; border-color: #0d7c6e; color: white; }
-
-/* 툴 그룹 */
 .tool-group { margin-bottom: 14px; }
-.tool-group-label {
-  font-size: 0.78rem; font-weight: 700; color: #888;
-  margin-bottom: 6px; padding-left: 2px; letter-spacing: 0.5px;
-}
-.tools-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px;
-}
+.tool-group-label { font-size: 0.78rem; font-weight: 700; color: #888; margin-bottom: 6px; padding-left: 2px; letter-spacing: 0.5px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; }
 .tool-btn {
   padding: 12px 8px; border-radius: 12px; border: 2px solid #e2e6ea;
   background: white; font-size: 1rem; font-weight: 700; cursor: pointer; color: #444;
   text-align: center; transition: all 0.2s; min-height: 48px;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
 }
 .tool-btn.selected { background: #e6f7f4; border-color: #0d7c6e; color: #0d7c6e; }
-.tool-btn.used-by-other {
-  background: #f5f5f5; border-color: #ddd; color: #bbb;
-  cursor: not-allowed; opacity: 0.6;
-}
+.tool-btn.used-by-other { background: #f5f5f5; border-color: #ddd; color: #bbb; cursor: not-allowed; opacity: 0.6; }
 .submit-btn {
   width: 100%; padding: 16px; background: #0d7c6e; color: white; border: none;
   border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
@@ -87,6 +77,13 @@ body {
 .log-tool-tag { background:#e6f7f4; color:#0d7c6e; border-radius:100px; padding:2px 8px; font-size:0.78rem; font-weight:600; display:inline-block; margin:2px; }
 .log-empty { text-align:center; color:#bbb; padding:30px; font-size:0.9rem; }
 .loading { text-align:center; color:#999; padding:30px; font-size:0.9rem; }
+.info-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+.info-table th { background:#f0f4f8; padding:10px 8px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e2e6ea; white-space:nowrap; }
+.info-table td { padding:10px 8px; border-bottom:1px solid #f0f0f0; color:#333; vertical-align:middle; }
+.info-table tr:last-child td { border-bottom:none; }
+.expired { color:#e53e3e; font-weight:700; }
+.expiring-soon { color:#d97706; font-weight:700; }
+.valid { color:#0d7c6e; font-weight:700; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #e2e6ea; border-top-color: #0d7c6e; border-radius: 50%; animation: spin 0.7s linear infinite; }
 .toast {
@@ -107,8 +104,10 @@ body {
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('main')">📋 현황</button>
   <button class="tab-btn" onclick="switchTab('log')">📜 변경로그</button>
+  <button class="tab-btn" onclick="switchTab('info')">🔍 툴 정보</button>
 </div>
 
+<!-- 현황 탭 -->
 <div id="mainSection">
   <div class="guide">
     ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 저장하기<br>
@@ -130,11 +129,26 @@ body {
   </div>
 </div>
 
+<!-- 변경로그 탭 -->
 <div id="logSection" style="display:none">
   <button class="log-refresh-btn" onclick="loadLog()">🔄 로그 새로고침</button>
   <div class="card">
     <h2>📜 변경 기록 (최신순)</h2>
     <div id="logBoard"><div class="log-empty">로그를 불러오는 중...</div></div>
+  </div>
+</div>
+
+<!-- 툴 정보 탭 -->
+<div id="infoSection" style="display:none">
+  <div class="card">
+    <h2>🔍 툴 정보</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      <button class="name-btn selected" onclick="selectToolTab('SV1')" id="tab-SV1">SV1</button>
+      <button class="name-btn" onclick="selectToolTab('SV2')" id="tab-SV2">SV2</button>
+      <button class="name-btn" onclick="selectToolTab('NV1')" id="tab-NV1">NV1</button>
+      <button class="name-btn" onclick="selectToolTab('NV2')" id="tab-NV2">NV2</button>
+    </div>
+    <div id="toolInfoBoard"></div>
   </div>
 </div>
 
@@ -144,7 +158,6 @@ body {
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwabeW5BO3eIdd_SAn0MGs-XO7TmXmpzy1IyOmToe3WSGwMfz7R_1zw2Y9eU50KqPZ2/exec";
 const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","엄병준","이진한","박진만","김성진","이준명"];
 
-// ★ 그룹별 툴 정의
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","SV1","SV2","96MPH"] },
   { label: "NIMBUS / VFV",  tools: ["N1","N2","NV1","NV2"] },
@@ -152,17 +165,89 @@ const TOOL_GROUPS = [
 ];
 const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
 
-let myName  = "";
+const TOOL_INFO = {
+  "SV1": [
+    { name:"Mettler balance WXS - WXS205DU/15",  sn:"C030757145",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
+    { name:"power supply",                         sn:"C030757145",  교정일:"-",          유효기간:"-" },
+    { name:"CALIBRATION WEIGHT 20G",               sn:"C123908275",  교정일:"-",          유효기간:"-" },
+    { name:"Measuring Glass 8mL",                  sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Temp/Humidity measuring device",       sn:"83338400",    교정일:"2024.10.02", 유효기간:"-" },
+    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Centering guide 2종",                  sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"WINDSHIELD",                           sn:"O",           교정일:"-",          유효기간:"-" },
+  ],
+  "SV2": [
+    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C125002172",              교정일:"2024.10.24", 유효기간:"2025.10.24" },
+    { name:"CALIBRATION WEIGHT 20G",               sn:"B103103609(10767)",       교정일:"2023.03.10", 유효기간:"-" },
+    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"7032466(10660)",          교정일:"2025.01.31", 유효기간:"2026.01.31" },
+    { name:"Barcode Verification Carrier",         sn:"V0103060(10695/후면 V0103071)", 교정일:"2023.02.02", 유효기간:"2025.02.02" },
+    { name:"Temp/Humidity measuring device",       sn:"-",                       교정일:"-",          유효기간:"-" },
+    { name:"power supply",                         sn:"C125002172",              교정일:"-",          유효기간:"-" },
+    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",                       교정일:"-",          유효기간:"-" },
+    { name:"PLATFORM RING (Balance plate)",        sn:"O",                       교정일:"-",          유효기간:"-" },
+    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",                       교정일:"-",          유효기간:"-" },
+    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",                       교정일:"-",          유효기간:"-" },
+    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O",             교정일:"-",          유효기간:"-" },
+    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",                       교정일:"-",          유효기간:"-" },
+  ],
+  "NV1": [
+    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C009046885",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
+    { name:"CALIBRATION WEIGHT 20G",               sn:"C117638916",  교정일:"2023.03.10", 유효기간:"2025.03.10" },
+    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"4070061(10661)", 교정일:"2025.01.31", 유효기간:"2026.01.31" },
+    { name:"Barcode Verification Carrier",         sn:"V0103071",    교정일:"2023.02.02", 유효기간:"2025.02.02" },
+    { name:"Temp/Humidity measuring device",       sn:"83338422",    교정일:"2024.10.02", 유효기간:"2025.10.02" },
+    { name:"power supply",                         sn:"B704623109",  교정일:"-",          유효기간:"-" },
+    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O", 교정일:"-",          유효기간:"-" },
+    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"VERIFICATION TIP PLATE CARRIER",       sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"CENTERING CARRIER",                    sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Reagent container(box)3x",             sn:"BCCC3677",    교정일:"-",          유효기간:"-" },
+    { name:"PYRAMIDS",                             sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"MICROTITER PLATE WEIGHING PLATFORM",   sn:"O",           교정일:"-",          유효기간:"-" },
+  ],
+  "NV2": [
+    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C009046886",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
+    { name:"CALIBRATION WEIGHT 20G",               sn:"C117638917",  교정일:"2023.03.10", 유효기간:"2025.03.10" },
+    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"4070061(10662)", 교정일:"2025.01.31", 유효기간:"2026.01.31" },
+    { name:"Barcode Verification Carrier",         sn:"V0103072",    교정일:"2023.02.02", 유효기간:"2025.02.02" },
+    { name:"Temp/Humidity measuring device",       sn:"83338423",    교정일:"2024.10.02", 유효기간:"2025.10.02" },
+    { name:"power supply",                         sn:"B704623110",  교정일:"-",          유효기간:"-" },
+    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O", 교정일:"-",          유효기간:"-" },
+    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"VERIFICATION TIP PLATE CARRIER",       sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"CENTERING CARRIER",                    sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Reagent container(box)3x",             sn:"BCCC3678",    교정일:"-",          유효기간:"-" },
+    { name:"PYRAMIDS",                             sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"MICROTITER PLATE WEIGHING PLATFORM",   sn:"O",           교정일:"-",          유효기간:"-" },
+  ],
+};
+
+let myName = "";
 let myTools = [];
 let boardData = {};
+let currentToolTab = "SV1";
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
-    b.classList.toggle('active', (tab==='main'&&i===0)||(tab==='log'&&i===1))
+    b.classList.toggle('active', (tab==='main'&&i===0)||(tab==='log'&&i===1)||(tab==='info'&&i===2))
   );
   document.getElementById('mainSection').style.display = tab==='main' ? 'block' : 'none';
   document.getElementById('logSection').style.display  = tab==='log'  ? 'block' : 'none';
+  document.getElementById('infoSection').style.display = tab==='info' ? 'block' : 'none';
   if (tab==='log') loadLog();
+  if (tab==='info') renderToolInfo();
 }
 
 function renderNames() {
@@ -183,9 +268,7 @@ function renderTools() {
   const usedByOthers = {};
   MEMBERS.forEach(m => {
     if (m === myName) return;
-    (boardData[m] || []).forEach(t => {
-      usedByOthers[t] = m;
-    });
+    (boardData[m] || []).forEach(t => { usedByOthers[t] = m; });
   });
 
   document.getElementById("toolsGrid").innerHTML = TOOL_GROUPS.map(group => `
@@ -197,11 +280,11 @@ function renderTools() {
           const isSelected = myTools.includes(t);
           const isUsed = other && !isSelected;
           return `<button
-            class="tool-btn ${isSelected ? 'selected' : ''} ${isUsed ? 'used-by-other' : ''}"
+            class="tool-btn ${isSelected?'selected':''} ${isUsed?'used-by-other':''}"
             onclick="toggleTool('${t}')"
-            ${isUsed ? 'disabled' : ''}
-            title="${isUsed ? other + ' 사용 중' : ''}"
-          >${t}${isUsed ? `<br><span style="font-size:0.65rem;font-weight:400">${other}</span>` : ''}</button>`;
+            ${isUsed?'disabled':''}
+            title="${isUsed?other+' 사용 중':''}"
+          >${t}${isUsed?`<br><span style="font-size:0.65rem;font-weight:400">${other}</span>`:''}</button>`;
         }).join("")}
       </div>
     </div>
@@ -286,7 +369,7 @@ async function loadLog() {
       document.getElementById('logBoard').innerHTML = '<div class="log-empty">아직 기록이 없습니다</div>';
       return;
     }
-    const rows = [...data.logs].reverse().slice(0,500).map(row => {
+    const rows = [...data.logs].reverse().slice(0, 500).map(row => {
       const dateStr = row[0] ? new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"}) : "-";
       const tools = row[2] && row[2] !== '없음'
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
@@ -302,6 +385,48 @@ async function loadLog() {
   } catch(e) {
     document.getElementById('logBoard').innerHTML = '<div class="log-empty">❌ 로그를 불러올 수 없습니다</div>';
   }
+}
+
+function selectToolTab(tool) {
+  currentToolTab = tool;
+  document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('selected'));
+  document.getElementById('tab-' + tool).classList.add('selected');
+  renderToolInfo();
+}
+
+function getExpiryClass(dateStr) {
+  if (!dateStr || dateStr === '-') return '';
+  const parts = dateStr.split('.');
+  if (parts.length < 3) return '';
+  const expiry = new Date(parts[0], parts[1]-1, parts[2]);
+  const now = new Date();
+  const diff = (expiry - now) / (1000 * 60 * 60 * 24);
+  if (diff < 0) return 'expired';
+  if (diff < 90) return 'expiring-soon';
+  return 'valid';
+}
+
+function renderToolInfo() {
+  const items = TOOL_INFO[currentToolTab] || [];
+  if (items.length === 0) {
+    document.getElementById('toolInfoBoard').innerHTML = '<div class="log-empty">정보가 없습니다</div>';
+    return;
+  }
+  const rows = items.map(item => {
+    const cls = getExpiryClass(item.유효기간);
+    return `<tr>
+      <td>${item.name}</td>
+      <td>${item.sn}</td>
+      <td>${item.교정일}</td>
+      <td class="${cls}">${item.유효기간}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('toolInfoBoard').innerHTML = `
+    <div style="overflow-x:auto">
+    <table class="info-table">
+      <thead><tr><th>시험장비명</th><th>S/N (ID)</th><th>교정일자</th><th>유효기간</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
 }
 
 function showToast(msg) {
