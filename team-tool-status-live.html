@@ -112,8 +112,8 @@ body {
 <!-- 현황 탭 -->
 <div id="mainSection">
   <div class="guide">
-    ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 저장하기<br>
-    반납 시: 해당 툴 체크 해제 → 저장하기
+    ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 출고<br>
+    반납 시: 해당 툴 체크 해제 → 반납
   </div>
   <div class="card">
     <h2>👤 내 이름</h2>
@@ -393,7 +393,7 @@ async function loadLog() {
     document.getElementById('logBoard').innerHTML = `
       <div style="overflow-x:auto">
       <table class="log-table">
-        <thead><tr><th>시간</th><th>이름</th><th>구분</th><th>사용 중인 툴</th></tr></thead>
+        <thead><tr><th>시간</th><th>이름</th><th>구분</th><th>사용 툴</th></tr></thead>
 
         <tbody>${rows}</tbody>
       </table></div>`;
