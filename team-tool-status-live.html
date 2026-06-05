@@ -150,6 +150,7 @@ body {
       <button class="name-btn" onclick="selectToolTab('NV1')" id="tab-NV1">NV1</button>
       <button class="name-btn" onclick="selectToolTab('NV2')" id="tab-NV2">NV2</button>
       <button class="name-btn" onclick="selectToolTab('96MPH')" id="tab-96MPH">96MPH</button>
+      <button class="name-btn" onclick="selectToolTab('D7')" id="tab-D7">D7</button>
     </div>
     <div id="toolInfoBoard"></div>
   </div>
@@ -171,59 +172,28 @@ const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
 const TOOL_INFO = {
   "SV1": [
     { name:"Mettler balance WXS - WXS205DU/15",  sn:"C030757145",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
-    { name:"power supply",                         sn:"C030757145",  교정일:"-",          유효기간:"-" },
     { name:"CALIBRATION WEIGHT 20G",               sn:"C123908275",  교정일:"-",          유효기간:"-" },
-    { name:"Measuring Glass 8mL",                  sn:"O",           교정일:"-",          유효기간:"-" },
+    { name:"Barcode Verification Carrier",         sn:"V0103060(10695/후면 V0103071)", 교정일:"2023.02.02", 유효기간:"2025.02.02" },
+    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"7032466(10660)",          교정일:"2025.01.31", 유효기간:"2026.01.31" },
     { name:"Temp/Humidity measuring device",       sn:"83338400",    교정일:"2024.10.02", 유효기간:"-" },
-    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Centering guide 2종",                  sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"WINDSHIELD",                           sn:"O",           교정일:"-",          유효기간:"-" },
+    
   ],
   "SV2": [
     { name:"Mettler balance WXS - WXS205DU/15",   sn:"C125002172",              교정일:"2024.10.24", 유효기간:"2025.10.24" },
     { name:"CALIBRATION WEIGHT 20G",               sn:"B103103609(10767)",       교정일:"2023.03.10", 유효기간:"-" },
     { name:"IR SENSOR MEASUREMENT TOOL",           sn:"7032466(10660)",          교정일:"2025.01.31", 유효기간:"2026.01.31" },
     { name:"Barcode Verification Carrier",         sn:"V0103060(10695/후면 V0103071)", 교정일:"2023.02.02", 유효기간:"2025.02.02" },
-    { name:"Temp/Humidity measuring device",       sn:"-",                       교정일:"-",          유효기간:"-" },
-    { name:"power supply",                         sn:"C125002172",              교정일:"-",          유효기간:"-" },
-    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",                       교정일:"-",          유효기간:"-" },
-    { name:"PLATFORM RING (Balance plate)",        sn:"O",                       교정일:"-",          유효기간:"-" },
-    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",                       교정일:"-",          유효기간:"-" },
-    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",                       교정일:"-",          유효기간:"-" },
-    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O",             교정일:"-",          유효기간:"-" },
-    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",                       교정일:"-",          유효기간:"-" },
+    { name:"Temp/Humidity measuring device",       sn:"-",                       교정일:"-",          유효기간:"-" },    
   ],
   "96MPH": [
-    { name:"96head II adjustment tool",              sn:"1646",  교정일:"2021.09.18", 유효기간:"2023.09.18" },
-    { name:"Tilt tilt/Tool, 96head position, NIPT",  sn:"O",     교정일:"-",          유효기간:"-" },
-    { name:"Tilt tilt/Tool, 96head position, NIPT 2",sn:"-",     교정일:"-",          유효기간:"-" },
-    { name:"96head II adjustment tool",              sn:"2103",  교정일:"-",          유효기간:"-" },
     { name:"384 Reader w/ spacer bar, power brick",  sn:"1499",  교정일:"2022.09.18", 유효기간:"2023.09.18" },
     { name:"Reader checkplate w/ CD",                sn:"1907",  교정일:"2024.05.21", 유효기간:"2025.05.21" },
-    { name:"M4, Stubby allen wrench/Tool. Adjust, MPPH, NMB", sn:"O", 교정일:"-",   유효기간:"-" },
-    { name:"96head II adjustment tool",              sn:"옛날껀 찾음", 교정일:"-",    유효기간:"-" },
   ],
   "NV1": [
     { name:"Mettler balance WXS - WXS205DU/15",   sn:"C009046885",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
     { name:"CALIBRATION WEIGHT 20G",               sn:"C117638916",  교정일:"2023.03.10", 유효기간:"2025.03.10" },
     { name:"IR SENSOR MEASUREMENT TOOL",           sn:"4070061(10661)", 교정일:"2025.01.31", 유효기간:"2026.01.31" },
-    { name:"Barcode Verification Carrier",         sn:"V0103071",    교정일:"2023.02.02", 유효기간:"2025.02.02" },
     { name:"Temp/Humidity measuring device",       sn:"83338422",    교정일:"2024.10.02", 유효기간:"2025.10.02" },
-    { name:"power supply",                         sn:"B704623109",  교정일:"-",          유효기간:"-" },
-    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O", 교정일:"-",          유효기간:"-" },
-    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"VERIFICATION TIP PLATE CARRIER",       sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"CENTERING CARRIER",                    sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Reagent container(box)3x",             sn:"BCCC3677",    교정일:"-",          유효기간:"-" },
-    { name:"PYRAMIDS",                             sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"MICROTITER PLATE WEIGHING PLATFORM",   sn:"O",           교정일:"-",          유효기간:"-" },
   ],
   "NV2": [
     { name:"Mettler balance WXS - WXS205DU/15",   sn:"C009046886",  교정일:"2024.10.24", 유효기간:"2025.10.24" },
@@ -231,19 +201,10 @@ const TOOL_INFO = {
     { name:"IR SENSOR MEASUREMENT TOOL",           sn:"4070061(10662)", 교정일:"2025.01.31", 유효기간:"2026.01.31" },
     { name:"Barcode Verification Carrier",         sn:"V0103072",    교정일:"2023.02.02", 유효기간:"2025.02.02" },
     { name:"Temp/Humidity measuring device",       sn:"83338423",    교정일:"2024.10.02", 유효기간:"2025.10.02" },
-    { name:"power supply",                         sn:"B704623110",  교정일:"-",          유효기간:"-" },
-    { name:"9ml GLASS MEASUREMENT VIAL",           sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"PLATFORM RING (Balance plate)",        sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"MEASURING VIAL WEIGHING PLATFORM",     sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"SHAKER VERIFICATION MEASUREMENT TOOL", sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"WINDSHIELD for the 9ml GLASS MEASUREMENT VIAL", sn:"O", 교정일:"-",          유효기간:"-" },
-    { name:"VERIFICATION BALANCE REAGENT CARRIER", sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"VERIFICATION TIP PLATE CARRIER",       sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"CENTERING CARRIER",                    sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Cable 3종",                            sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"Reagent container(box)3x",             sn:"BCCC3678",    교정일:"-",          유효기간:"-" },
-    { name:"PYRAMIDS",                             sn:"O",           교정일:"-",          유효기간:"-" },
-    { name:"MICROTITER PLATE WEIGHING PLATFORM",   sn:"O",           교정일:"-",          유효기간:"-" },
+  ],
+  "D7": [
+    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"191203-01",  교정일:"2024.07.18", 유효기간:"2026.07.18" },
+    { name:"Hardware box",                        sn:"17031817",  교정일:"2024.07.18", 유효기간:"2026.07.18" },
   ],
 };
 
