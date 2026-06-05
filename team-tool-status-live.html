@@ -378,7 +378,7 @@ async function loadLog() {
       document.getElementById('logBoard').innerHTML = '<div class="log-empty">아직 기록이 없습니다</div>';
       return;
     }
-    const rows = [...data.logs].reverse().slice(0, 500).map(row => {
+    const rows = [...data.logs].slice(0, 500).map(row => {
       const dateStr = row[0] ? new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"}) : "-";
       const tools = row[2] && row[2] !== '없음'
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
