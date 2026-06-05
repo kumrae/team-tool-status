@@ -163,6 +163,8 @@ body {
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycbwabeW5BO3eIdd_SAn0MGs-XO7TmXmpzy1IyOmToe3WSGwMfz7R_1zw2Y9eU50KqPZ2/exec";
 const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","엄병준","이진한","박진만","김성진","이준명"];
+const EXTRA_MEMBERS = ["홍승한","조원주","이윤모","김윤성","이태일","서인석","이재룡","전대수","장승혁","박수환","최상원"];
+const ALL_MEMBERS = [...MEMBERS, ...EXTRA_MEMBERS];
 
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","SV1","SV2","96MPH"] },
@@ -226,10 +228,25 @@ function switchTab(tab) {
   if (tab==='info') renderToolInfo();
 }
 
+let showExtra = false;
+
 function renderNames() {
-  document.getElementById("nameButtons").innerHTML = MEMBERS.map(m =>
+  const mainBtns = MEMBERS.map(m =>
     `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
   ).join("");
+
+  const extraBtns = showExtra ? EXTRA_MEMBERS.map(m =>
+    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
+  ).join("") : "";
+
+  const toggleBtn = `<button
+    class="name-btn"
+    style="background:#f0f4f8;border-color:#ddd;color:#888;font-size:0.85rem"
+    onclick="showExtra=!showExtra;renderNames()">
+    ${showExtra ? "▲ 접기" : "▼ 더보기..."}
+  </button>`;
+
+  document.getElementById("nameButtons").innerHTML = mainBtns + toggleBtn + extraBtns;
 }
 
 function selectName(name) {
@@ -242,7 +259,7 @@ function selectName(name) {
 
 function renderTools() {
   const usedByOthers = {};
-  MEMBERS.forEach(m => {
+  ALL_MEMBERS.forEach(m => {
     if (m === myName) return;
     (boardData[m] || []).forEach(t => { usedByOthers[t] = m; });
   });
@@ -306,7 +323,7 @@ async function loadStatus() {
 }
 
 function renderBoard() {
-  document.getElementById("statusBoard").innerHTML = MEMBERS.map(m => {
+  document.getElementById("statusBoard").innerHTML = ALL_MEMBERS.map(m => {
     const tools = boardData[m] || [];
     return `
       <div class="member-row">
