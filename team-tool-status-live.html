@@ -389,13 +389,16 @@ async function submitStatus(type) {
 async function loadStatus() {
   try {
     const res = await fetch(GAS_URL + "?action=get");
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
-    boardData = data;
+    boardData = data || {};
     if (myName) myTools = [...(boardData[myName] || [])];
     renderTools();
     renderBoard();
-  } catch(e) {
-    document.getElementById("statusBoard").innerHTML = '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
+  } catch (e) {
+    console.error(e);
+    document.getElementById("statusBoard").innerHTML =
+      '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
   }
 }
 
