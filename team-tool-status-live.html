@@ -414,7 +414,14 @@ tr:last-child td { border-bottom: none; }
 .small-muted { color: var(--color-text-muted); font-size: var(--text-sm); }
 
 @media (max-width: 980px) {
-  .layout { grid-template-columns: 1fr; }
+  .layout {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .reserve-summary-card {
+    order: 3;
+  }
 }
 @media (max-width: 720px) {
   .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -491,7 +498,7 @@ tr:last-child td { border-bottom: none; }
           <div class="helper" id="dateHelper">날짜를 선택하면 해당 기간과 겹치는 예약을 기준으로 툴 사용 가능 여부를 표시합니다.</div>
         </div>
 
-        <div class="card">
+        <div class="card reserve-summary-card">
           <h2>선택된 예약</h2>
           <div id="selectionSummary" class="small-muted">이름과 날짜를 먼저 선택하세요.</div>
           <div class="actions">
