@@ -399,18 +399,10 @@ async function loadStatus() {
     if (!res.ok) throw new Error("HTTP " + res.status);
 
     const data = await res.json();
-    const newBoardData = data || {};
-    const serverTools = myName ? [...(newBoardData[myName] || [])] : [];
+    boardData = data || {};
 
-    boardData = newBoardData;
-
-    if (myName) {
-      const localChanged =
-        JSON.stringify([...myTools].sort()) !== JSON.stringify([...serverTools].sort());
-
-      if (!isEditing && !localChanged) {
-        myTools = serverTools;
-      }
+    if (myName && !isEditing) {
+      myTools = [...(boardData[myName] || [])];
     }
 
     renderTools();
