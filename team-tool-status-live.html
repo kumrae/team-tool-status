@@ -945,7 +945,11 @@ function switchTab(tabName) {
   if (tabName === 'info') renderToolInfo();
 }
 function clearSelection() {
+  myName = "";
   myTools = [];
+  startDateEl.value = "";
+  endDateEl.value = "";
+  renderNames();
   renderTools();
   renderSelectionSummary();
   showToast('현재 선택을 초기화했습니다.');
@@ -965,9 +969,15 @@ async function saveReservation() {
   };
 
   try {
-    const conflict = reservations.some(item => item.name !== myName && rangesOverlap(payload.startDate, payload.endDate, item.startDate, item.endDate) && (item.tools || []).some(tool => myTools.includes(tool)));
+    const conflict = reservations.some(item => 
+      item.name !== myName && 
+      rangesOverlap(payload.startDate, payload.endDate, item.startDate, item.endDate) && 
+      (item.tools || []).some(tool => myTools.includes(tool))
+    );
     if (conflict) return showToast('같은 기간에 이미 예약된 툴이 있습니다.');
 
+    reserveBtn.disabled = true;
+    
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -975,49 +985,42 @@ async function saveReservation() {
       body: JSON.stringify(payload)
     });
 
-    reservations = reservations.filter(item => !(item.name === myName && item.startDate === payload.startDate && item.endDate === payload.endDate));
-    reservations.unshift({
-      timestamp: new Date().toISOString(),
-      name: myName,
-      tools: [...myTools],
-      type: '예약',
-      startDate: payload.startDate,
-      endDate: payload.endDate
-    });
-    renderBoard();
-    loadLog();
-    renderTools();
-    renderSelectionSummary();
+    await loadReservations();
     showToast('예약을 저장했습니다.');
   } catch (error) {
     console.error(error);
     showToast('예약 저장에 실패했습니다.');
+  } finally {
+    reserveBtn.disabled = false;
   }
 }
+
+    
 async function cancelMyReservations() {
   if (!myName) return showToast('이름을 먼저 선택하세요.');
   const hasMine = reservations.some(item => item.name === myName);
   if (!hasMine) return showToast('삭제할 예약이 없습니다.');
 
   try {
+    cancelBtn.disabled = true;
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'cancelByName', name: myName, type: '예약취소' })
     });
-    reservations = reservations.filter(item => item.name !== myName);
+    
     myTools = [];
-    renderBoard();
-    loadLog();
-    renderTools();
-    renderSelectionSummary();
+    await loadReservations();
     showToast(`${myName} 예약을 전체 해제했습니다.`);
   } catch (error) {
     console.error(error);
     showToast('예약 해제에 실패했습니다.');
+  } finally {
+    cancelBtn.disabled = false;
   }
-}
+} 
+  
 async function loadReservations() {
   try {
     const res = await fetch(GAS_URL + '?action=getReservations');
