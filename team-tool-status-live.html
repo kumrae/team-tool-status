@@ -1,185 +1,552 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>팀 툴 사용 현황</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>팀 툴 예약 현황</title>
+<link rel="preconnect" href="https://api.fontshare.com" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
 <style>
+:root, [data-theme="light"] {
+  --font-body: 'Satoshi', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  --font-display: 'Satoshi', 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.35rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  --color-bg: #f7f6f2;
+  --color-surface: #f9f8f5;
+  --color-surface-2: #fbfbf9;
+  --color-surface-offset: #f1eeea;
+  --color-border: #d9d5ce;
+  --color-divider: #e3dfd9;
+  --color-text: #26231c;
+  --color-text-muted: #6e6b64;
+  --color-text-faint: #a9a59d;
+  --color-text-inverse: #f9f8f4;
+  --color-primary: #01696f;
+  --color-primary-hover: #0c4e54;
+  --color-primary-soft: #dbeceb;
+  --color-danger: #b83b4d;
+  --color-danger-soft: #fdecef;
+  --color-warning: #a76516;
+  --color-warning-soft: #fff3df;
+  --color-success: #356c28;
+  --color-success-soft: #e3f0df;
+  --shadow-sm: 0 1px 2px rgba(26, 22, 16, 0.06);
+  --shadow-md: 0 10px 30px rgba(26, 22, 16, 0.08);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-full: 999px;
+}
+
+[data-theme="dark"] {
+  --color-bg: #171614;
+  --color-surface: #1d1b19;
+  --color-surface-2: #24221f;
+  --color-surface-offset: #2c2926;
+  --color-border: #3b3733;
+  --color-divider: #302d2a;
+  --color-text: #d8d4cd;
+  --color-text-muted: #9d9890;
+  --color-text-faint: #706c66;
+  --color-text-inverse: #1d1b19;
+  --color-primary: #58a5ad;
+  --color-primary-hover: #78bac1;
+  --color-primary-soft: rgba(88, 165, 173, 0.16);
+  --color-danger: #ef8392;
+  --color-danger-soft: rgba(239, 131, 146, 0.14);
+  --color-warning: #f0b562;
+  --color-warning-soft: rgba(240, 181, 98, 0.14);
+  --color-success: #90c880;
+  --color-success-soft: rgba(144, 200, 128, 0.14);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 12px 32px rgba(0,0,0,0.3);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 body {
-  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  background: #f0f4f8; min-height: 100vh; padding: 20px;
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
-.header { background: #0d7c6e; color: white; border-radius: 16px; padding: 20px 24px; margin-bottom: 12px; }
-.header h1 { font-size: 1.3rem; font-weight: 700; }
-.header .time { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
-.tabs { display:flex; gap:8px; margin-bottom:16px; }
+button, input, select { font: inherit; color: inherit; }
+button { border: none; background: none; cursor: pointer; }
+input, select {
+  width: 100%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+}
+input:focus-visible, button:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+.header {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  background: linear-gradient(180deg, var(--color-primary), var(--color-primary-hover));
+  color: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-4);
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+.brand {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+.logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.12);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.logo svg { width: 26px; height: 26px; }
+.header h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.header p, .header .time { color: rgba(255,255,255,0.82); font-size: var(--text-sm); }
+.theme-btn {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: rgba(255,255,255,0.12); color: white;
+  display: grid; place-items: center;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
 .tab-btn {
-  flex:1; padding:12px; border-radius:12px; border:2px solid #e2e6ea;
-  background:white; font-size:0.95rem; font-weight:700; cursor:pointer; color:#555; transition:all 0.2s;
+  min-height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
 }
-.tab-btn.active { background:#0d7c6e; border-color:#0d7c6e; color:white; }
-.card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-.card h2 { font-size: 0.95rem; color: #555; margin-bottom: 12px; font-weight: 600; }
-.name-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
-.name-btn {
-  padding: 10px 20px; border-radius: 100px; border: 2px solid #e2e6ea;
-  background: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; color: #444; transition: all 0.2s;
+.tab-btn.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
 }
-.name-btn.selected { background: #0d7c6e; border-color: #0d7c6e; color: white; }
-.tool-group { margin-bottom: 14px; }
-.tool-group-label { font-size: 0.78rem; font-weight: 700; color: #888; margin-bottom: 6px; padding-left: 2px; letter-spacing: 0.5px; }
-.tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; }
-.tool-btn {
-  padding: 12px 8px; border-radius: 12px; border: 2px solid #e2e6ea;
-  background: white; font-size: 1rem; font-weight: 700; cursor: pointer; color: #444;
-  text-align: center; transition: all 0.2s; min-height: 48px;
-  display: flex; align-items: center; justify-content: center; flex-direction: column;
+
+.layout {
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+  gap: var(--space-4);
 }
-.tool-btn.selected { background: #e6f7f4; border-color: #0d7c6e; color: #0d7c6e; }
-.tool-btn.used-by-other { background: #f5f5f5; border-color: #ddd; color: #bbb; cursor: not-allowed; opacity: 0.6; }
-.submit-btn {
-  width: 100%; padding: 16px; background: #0d7c6e; color: white; border: none;
-  border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer;
-  margin-bottom: 16px; transition: background 0.2s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
+.card {
+  background: var(--color-surface);
+  border: 1px solid rgba(39, 35, 28, 0.12);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-5);
 }
-.submit-btn:hover { background: #0a6458; }
-.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
-.reset-btn {
-  width: 100%; padding: 12px; background: #fff0f0; color: #e53e3e; border: none;
-  border-radius: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: 16px;
+.card + .card { margin-top: var(--space-4); }
+.card h2 {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-3);
+  letter-spacing: -0.02em;
 }
-.reset-btn:hover { background: #ffe0e0; }
-.member-row { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
-.member-row:last-child { border-bottom: none; }
-.avatar {
-  width: 38px; height: 38px; border-radius: 50%; background: #0d7c6e; color: white;
-  font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+.section-note {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
 }
-.member-name { font-weight: 700; font-size: 0.95rem; color: #222; margin-bottom: 6px; }
-.tool-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tool-tag { background: #e6f7f4; color: #0d7c6e; border-radius: 100px; padding: 3px 10px; font-size: 0.8rem; font-weight: 600; }
-.no-tool { color: #bbb; font-size: 0.85rem; }
 .guide {
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
-  padding: 12px 16px; font-size: 0.82rem; color: #92400e; margin-bottom: 16px; line-height: 1.6;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--color-warning-soft);
+  border: 1px solid rgba(167, 101, 22, 0.16);
+  border-radius: var(--radius-lg);
+  color: var(--color-warning);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
 }
-.log-refresh-btn {
-  width:100%; padding:12px; background:#f0f4f8; color:#555; border:none;
-  border-radius:10px; font-size:0.9rem; font-weight:600; cursor:pointer; margin-bottom:12px;
+.name-buttons, .tool-pills, .quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
-.log-refresh-btn:hover { background:#e2e6ea; }
-.log-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
-.log-table th { background:#f0f4f8; padding:10px 8px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e2e6ea; }
-.log-table td { padding:10px 8px; border-bottom:1px solid #f0f0f0; color:#333; vertical-align:middle; }
-.log-table tr:last-child td { border-bottom:none; }
-.log-tool-tag { background:#e6f7f4; color:#0d7c6e; border-radius:100px; padding:2px 8px; font-size:0.78rem; font-weight:600; display:inline-block; margin:2px; }
-.log-empty { text-align:center; color:#bbb; padding:30px; font-size:0.9rem; }
-.loading { text-align:center; color:#999; padding:30px; font-size:0.9rem; }
-.info-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
-.info-table th { background:#f0f4f8; padding:10px 8px; text-align:left; font-weight:700; color:#555; border-bottom:2px solid #e2e6ea; white-space:nowrap; }
-.info-table td { padding:10px 8px; border-bottom:1px solid #f0f0f0; color:#333; vertical-align:middle; }
-.info-table tr:last-child td { border-bottom:none; }
-.expired { color:#e53e3e; font-weight:700; }
-.expiring-soon { color:#d97706; font-weight:700; }
-.valid { color:#0d7c6e; font-weight:700; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #e2e6ea; border-top-color: #0d7c6e; border-radius: 50%; animation: spin 0.7s linear infinite; }
+.pill {
+  min-height: 42px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+.pill.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+.pill.subtle {
+  color: var(--color-text-muted);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+.field label {
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+.helper {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.tool-group + .tool-group { margin-top: var(--space-4); }
+.tool-group-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-2);
+}
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: var(--space-2);
+}
+.tool-btn {
+  min-height: 62px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: var(--space-2);
+  text-align: center;
+}
+.tool-btn.selected {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.tool-btn.blocked {
+  background: var(--color-surface-offset);
+  color: var(--color-text-faint);
+  cursor: not-allowed;
+}
+.tool-btn .sub {
+  font-size: 0.72rem;
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.action-btn {
+  min-height: 52px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+.action-btn.primary { background: var(--color-primary); color: var(--color-text-inverse); }
+.action-btn.secondary { background: var(--color-danger); color: white; }
+.action-btn.ghost {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+.action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.status-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.kpi {
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+}
+.kpi .label { font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+.kpi .value { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.03em; }
+.member-list, .reservation-list, .tool-info-list { display: grid; gap: var(--space-3); }
+.member-row, .reservation-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--space-3);
+  align-items: start;
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+}
+.avatar {
+  width: 40px; height: 40px; border-radius: 14px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  display: grid; place-items: center;
+  font-weight: 700;
+}
+.row-title { font-weight: 700; }
+.row-sub { font-size: var(--text-sm); color: var(--color-text-muted); margin-top: 0.15rem; }
+.tag-wrap { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.7rem;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 700;
+}
+.badge.success { background: var(--color-success-soft); color: var(--color-success); }
+.badge.warning { background: var(--color-warning-soft); color: var(--color-warning); }
+.badge.danger { background: var(--color-danger-soft); color: var(--color-danger); }
+.inline-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+table { width: 100%; border-collapse: collapse; min-width: 680px; }
+th, td {
+  padding: 0.95rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-divider);
+  font-size: var(--text-sm);
+}
+th { background: var(--color-surface-2); color: var(--color-text-muted); }
+tr:last-child td { border-bottom: none; }
+.hidden { display: none !important; }
+.empty {
+  padding: var(--space-8) var(--space-4);
+  text-align: center;
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+}
 .toast {
-  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
-  background: #222; color: white; padding: 12px 24px; border-radius: 100px;
-  font-size: 0.9rem; font-weight: 600; opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap;
+  position: fixed;
+  left: 50%; bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: #171614;
+  color: white;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.25s ease;
+  z-index: 20;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.small-muted { color: var(--color-text-muted); font-size: var(--text-sm); }
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-grid, .actions, .status-summary { grid-template-columns: 1fr; }
+  .member-row, .reservation-row { grid-template-columns: auto 1fr; }
+  .member-row > :last-child, .reservation-row > :last-child { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
-
-<div class="header">
-  <h1>🔧 팀 툴 사용 현황</h1>
-  <div class="time" id="currentTime"></div>
-</div>
-
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('main')">📋 현황</button>
-  <button class="tab-btn" onclick="switchTab('info')">🔍 툴 정보</button>
-</div>
-<div class="tabs" style="margin-top:-8px">
-  <button class="tab-btn" onclick="switchTab('log')">📜 변경로그</button>
-</div>
-
-<!-- 현황 탭 -->
-<div id="mainSection">
-  <div class="guide">
-    ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 출고<br>
-    반납 시: 해당 툴 체크 해제 → 반납
-  </div>
-  <div class="card">
-    <h2>👤 내 이름</h2>
-    <div class="name-buttons" id="nameButtons"></div>
-  </div>
-  <div class="card">
-    <h2>🔧 사용 중인 툴 선택</h2>
-    <div id="toolsGrid"></div>
-  </div>
-  <div style="display:flex;gap:10px;margin-bottom:16px">
-    <button class="submit-btn" id="submitBtn" onclick="submitStatus('출고')" disabled
-      style="background:#0d7c6e;margin-bottom:0">
-      📤 출고
-    </button>
-    <button class="submit-btn" id="returnBtn" onclick="submitStatus('반납')" disabled
-      style="background:#e53e3e;margin-bottom:0">
-      📥 반납
-    </button>
-  </div>
-  <button class="reset-btn" onclick="resetMyStatus()">🔄 내 상태 초기화</button>
-  <div class="card">
-    <h2>📊 팀 현황판 <span style="font-size:0.8rem;color:#aaa;font-weight:400;margin-left:6px">30초마다 자동갱신</span></h2>
-    <div id="statusBoard"><div class="loading"><span class="spinner"></span> 불러오는 중...</div></div>
-  </div>
-</div>
-
-<!-- 변경로그 탭 -->
-<div id="logSection" style="display:none">
-  <button class="log-refresh-btn" onclick="loadLog()">🔄 로그 새로고침</button>
-  <div class="card">
-    <h2>📜 변경 기록 (최신순)</h2>
-    <div id="logBoard"><div class="log-empty">로그를 불러오는 중...</div></div>
-  </div>
-</div>
-
-<!-- 툴 정보 탭 -->
-<div id="infoSection" style="display:none">
-  <div class="card">
-    <h2>🔍 툴 정보</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-      <button class="name-btn selected" onclick="selectToolTab('SV1')" id="tab-SV1">SV1</button>
-      <button class="name-btn" onclick="selectToolTab('SV2')" id="tab-SV2">SV2</button>
-      <button class="name-btn" onclick="selectToolTab('SV3')" id="tab-SV3">SV3</button>
-      <button class="name-btn" onclick="selectToolTab('SV4')" id="tab-SV4">SV4</button>
-      <button class="name-btn" onclick="selectToolTab('96MPH')" id="tab-96MPH">96MPH</button>
+<div class="page">
+  <header class="header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-label="Tool reservation logo">
+            <path d="M6 7.5h7.5l4.5 4.5-7 7H6z"></path>
+            <path d="M9 7.5V4h7"></path>
+            <circle cx="8.8" cy="10.3" r="1.1" fill="currentColor" stroke="none"></circle>
+          </svg>
+        </div>
+        <div>
+          <h1>팀 툴 예약 현황</h1>
+          <p>출고/반납 대신 날짜 기반 예약으로 운영하는 버전</p>
+        </div>
+      </div>
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="테마 전환">🌙</button>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-      <button class="name-btn" onclick="selectToolTab('NV1')" id="tab-NV1">NV1</button>
-      <button class="name-btn" onclick="selectToolTab('NV2')" id="tab-NV2">NV2</button>
-      <button class="name-btn" onclick="selectToolTab('NV3')" id="tab-NV3">NV3</button>
+    <div class="time" id="currentTime"></div>
+  </header>
+
+  <nav class="tabs" aria-label="탭 메뉴">
+    <button class="tab-btn active" data-tab="reserve">예약</button>
+    <button class="tab-btn" data-tab="board">현황판</button>
+    <button class="tab-btn" data-tab="log">예약로그</button>
+    <button class="tab-btn" data-tab="info">툴 정보</button>
+  </nav>
+
+  <section id="reserveSection" class="tab-section">
+    <div class="layout">
+      <div>
+        <div class="guide">
+          <div><strong>사용법</strong> 이름 선택 → 예약 기간 지정 → 사용할 툴 선택 → 예약 저장</div>
+          <div>같은 기간에 이미 예약된 툴은 자동으로 비활성화되도록 설계했습니다.</div>
+        </div>
+
+        <div class="card">
+          <h2>예약 입력</h2>
+          <p class="section-note">프론트는 날짜 기반 예약 UI로 바꿨고, 실제 충돌 차단은 Apps Script에서도 한 번 더 검사해야 안전합니다.</p>
+
+          <div class="field" style="margin-bottom:1rem">
+            <label>예약자</label>
+            <div class="name-buttons" id="nameButtons"></div>
+          </div>
+
+          <div class="form-grid" style="margin-bottom:1rem">
+            <div class="field">
+              <label for="startDate">시작일</label>
+              <input id="startDate" type="date" />
+            </div>
+            <div class="field">
+              <label for="endDate">종료일</label>
+              <input id="endDate" type="date" />
+            </div>
+          </div>
+
+          <div class="quick-filters" style="margin-bottom:1rem">
+            <button class="pill subtle" type="button" onclick="setQuickRange(0)">오늘</button>
+            <button class="pill subtle" type="button" onclick="setQuickRange(1)">1일</button>
+            <button class="pill subtle" type="button" onclick="setQuickRange(3)">3일</button>
+            <button class="pill subtle" type="button" onclick="setQuickRange(7)">7일</button>
+          </div>
+
+          <div class="helper" id="dateHelper">날짜를 선택하면 해당 기간과 겹치는 예약을 기준으로 툴 사용 가능 여부를 표시합니다.</div>
+        </div>
+
+        <div class="card">
+          <h2>선택된 예약</h2>
+          <div id="selectionSummary" class="small-muted">이름과 날짜를 먼저 선택하세요.</div>
+          <div class="actions">
+            <button id="reserveBtn" class="action-btn primary" type="button" disabled>예약 저장</button>
+            <button id="cancelBtn" class="action-btn secondary" type="button" disabled>내 예약 전체 해제</button>
+          </div>
+          <div style="margin-top:0.75rem">
+            <button id="clearSelectionBtn" class="action-btn ghost" type="button">현재 선택 초기화</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>예약 가능 툴</h2>
+          <p class="section-note">같은 날짜 구간에 다른 사람이 이미 예약한 툴은 회색으로 잠깁니다.</p>
+          <div id="toolsGrid"></div>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-      <button class="name-btn" onclick="selectToolTab('D1')" id="tab-D1">D1</button>
-      <button class="name-btn" onclick="selectToolTab('D2')" id="tab-D2">D2</button>
-      <button class="name-btn" onclick="selectToolTab('D3')" id="tab-D3">D3</button>
-      <button class="name-btn" onclick="selectToolTab('D4')" id="tab-D4">D4</button>
-      <button class="name-btn" onclick="selectToolTab('D5')" id="tab-D5">D5</button>
-      <button class="name-btn" onclick="selectToolTab('D6')" id="tab-D6">D6</button>
+  </section>
+
+  <section id="boardSection" class="tab-section hidden">
+    <div class="card">
+      <h2>팀 예약 현황판</h2>
+      <div class="status-summary">
+        <div class="kpi"><div class="label">전체 툴 수</div><div class="value" id="kpiTotalTools">0</div></div>
+        <div class="kpi"><div class="label">현재 예약 수</div><div class="value" id="kpiReservations">0</div></div>
+        <div class="kpi"><div class="label">예약 중 툴 수</div><div class="value" id="kpiBusyTools">0</div></div>
+      </div>
+      <div class="member-list" id="statusBoard"></div>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-      <button class="name-btn" onclick="selectToolTab('J1')" id="tab-J1">J1</button>
-      <button class="name-btn" onclick="selectToolTab('J2')" id="tab-J2">J2</button>
-      <button class="name-btn" onclick="selectToolTab('J3')" id="tab-J3">J3</button>
+  </section>
+
+  <section id="logSection" class="tab-section hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+        <div>
+          <h2>예약 로그</h2>
+          <p class="section-note" style="margin-bottom:0">최신 예약 내역과 기간을 한 번에 확인할 수 있습니다.</p>
+        </div>
+        <button class="action-btn ghost" type="button" style="max-width:180px" onclick="loadLog()">로그 새로고침</button>
+      </div>
+      <div id="logBoard"></div>
     </div>
-    <div id="toolInfoBoard"></div>
-  </div>
+  </section>
+
+  <section id="infoSection" class="tab-section hidden">
+    <div class="card">
+      <h2>툴 정보</h2>
+      <p class="section-note">교정일과 유효기간은 기존 구조를 유지했습니다.</p>
+      <div class="tool-pills" id="toolTabButtons"></div>
+      <div style="margin-top:1rem" id="toolInfoBoard"></div>
+    </div>
+  </section>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -190,396 +557,524 @@ const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","�
 const EXTRA_MEMBERS = ["홍승한","조원주","이윤모","김윤성","이태일","서인석","이재룡","전대수","장승혁","장원석","박수환","최상원"];
 const STATUS_MEMBERS = ["🔧 수리/교정중","⚠️ 점검필요"];
 const ALL_MEMBERS = [...MEMBERS, ...EXTRA_MEMBERS, ...STATUS_MEMBERS];
-
-
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","S3","S4","SV1","SV2","SV3","SV4","96MPH"] },
-  { label: "NIMBUS / VFV",  tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
-  { label: "CFX96",  tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3"] },
+  { label: "NIMBUS / VFV", tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
+  { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3"] },
 ];
-const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
-
+const TOOLS = TOOL_GROUPS.flatMap(group => group.tools);
 const TOOL_INFO = {
   "SV1": [
-    { name:"Mettler balance WXS - WXS205DU/15",  sn:"C009046835",  교정일:"2025.10.22", 유효기간:"2026.10.22" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C123908275",  교정일:"2025.02.11", 유효기간:"2027.02.26" },
-    { name:"Barcode Verification Carrier",         sn:"V0107368", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
-    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"7032466",          교정일:"-", 유효기간:"-" },
-    { name:"Temp/Humidity measuring device",       sn:"83338422",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C009046835", 교정일:"2025.10.22", 유효기간:"2026.10.22" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C123908275", 교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Barcode Verification Carrier", sn:"V0107368", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
+    { name:"IR SENSOR MEASUREMENT TOOL", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"Temp/Humidity measuring device", sn:"83338422", 교정일:"2025.10.02", 유효기간:"2026.10.02" }
   ],
   "SV2": [
-    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C125002172",              교정일:"2025.10.22", 유효기간:"2026.10.22" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C118673812",       교정일:"2025.02.11", 유효기간:"2027.02.26" },
-    { name:"Barcode Verification Carrier",         sn:"V0107372", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
-    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"-",          교정일:"-", 유효기간:"-" },
-    { name:"Temp/Humidity measuring device",       sn:"62242738",     교정일:"2025.10.02", 유효기간:"2026.10.02" },    
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C125002172", 교정일:"2025.10.22", 유효기간:"2026.10.22" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C118673812", 교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Barcode Verification Carrier", sn:"V0107372", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
+    { name:"IR SENSOR MEASUREMENT TOOL", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"Temp/Humidity measuring device", sn:"62242738", 교정일:"2025.10.02", 유효기간:"2026.10.02" }
   ],
   "SV3": [
-    { name:"Mettler balance WXS - WXS205DU/15",  sn:"-",  교정일:"-", 유효기간:"-" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C014263082",  교정일:"2025.02.11",          유효기간:"2027.02.26" },
-    { name:"Barcode Verification Carrier",         sn:"V0107368", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
-    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"-", 교정일:"-", 유효기간:"-" },
-    { name:"Temp/Humidity measuring device",       sn:"83338422",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C014263082", 교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Barcode Verification Carrier", sn:"V0107368", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
+    { name:"IR SENSOR MEASUREMENT TOOL", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"Temp/Humidity measuring device", sn:"83338422", 교정일:"2025.10.02", 유효기간:"2026.10.02" }
   ],
   "SV4": [
-    { name:"Mettler balance WXS - WXS205DU/15",  sn:"C502402547",  교정일:"2026.03.13", 유효기간:"2027.03.13" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C123908275",  교정일:"2025.02.11", 유효기간:"2027.02.26" },
-    { name:"Barcode Verification Carrier",         sn:"V0107372", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
-    { name:"IR SENSOR MEASUREMENT TOOL",           sn:"22113033",          교정일:"2026.06.05", 유효기간:"2027.06.05" },
-    { name:"Temp/Humidity measuring device",       sn:"83338400",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C502402547", 교정일:"2026.03.13", 유효기간:"2027.03.13" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C123908275", 교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Barcode Verification Carrier", sn:"V0107372", 교정일:"2025.06.19", 유효기간:"2027.06.19" },
+    { name:"IR SENSOR MEASUREMENT TOOL", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"Temp/Humidity measuring device", sn:"83338400", 교정일:"2025.10.02", 유효기간:"2026.10.02" }
   ],
-  "96MPH": [
-    { name:"Reader checkplate w/ CD",                sn:"1907",  교정일:"-", 유효기간:"-" },
-  ],
-  
+  "96MPH": [{ name:"Reader checkplate w/ CD", sn:"1907", 교정일:"-", 유효기간:"-" }],
   "NV1": [
-    { name:"Temp/Humidity measuring device",       sn:"83338400",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
-    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C118687577",  교정일:"2025.10.22", 유효기간:"2026.10.22" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C118673812",  교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Temp/Humidity measuring device", sn:"83338400", 교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C118687577", 교정일:"2025.10.22", 유효기간:"2026.10.22" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C118673812", 교정일:"2025.02.11", 유효기간:"2027.02.26" }
   ],
   "NV2": [
-    { name:"Temp/Humidity measuring device",       sn:"83338422",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
-    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C030757145",  교정일:"2025.10.22", 유효기간:"2026.10.22" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C123908275",  교정일:"2025.02.11", 유효기간:"2027.02.26" },
+    { name:"Temp/Humidity measuring device", sn:"83338422", 교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C030757145", 교정일:"2025.10.22", 유효기간:"2026.10.22" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C123908275", 교정일:"2025.02.11", 유효기간:"2027.02.26" }
   ],
-   "NV3": [
-     { name:"Temp/Humidity measuring device",       sn:"62242738",    교정일:"2025.10.02", 유효기간:"2026.10.02" },
-    { name:"Mettler balance WXS - WXS205DU/15",   sn:"C140681419",  교정일:"2025.10.22", 유효기간:"2026.10.22" },
-    { name:"CALIBRATION WEIGHT 20G",               sn:"C014263082",  교정일:"2025.02.11", 유효기간:"2027.02.26" },
+  "NV3": [
+    { name:"Temp/Humidity measuring device", sn:"62242738", 교정일:"2025.10.02", 유효기간:"2026.10.02" },
+    { name:"Mettler balance WXS - WXS205DU/15", sn:"C140681419", 교정일:"2025.10.22", 유효기간:"2026.10.22" },
+    { name:"CALIBRATION WEIGHT 20G", sn:"C014263082", 교정일:"2025.02.11", 유효기간:"2027.02.26" }
   ],
-  
   "D1": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"170508-08",  교정일:"2025.08.06", 유효기간:"2027.08.06" },
-    { name:"Hardware box",                        sn:"20051516",  교정일:"2025.08.06", 유효기간:"2027.08.06" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"170508-08", 교정일:"2025.08.06", 유효기간:"2027.08.06" },
+    { name:"Hardware box", sn:"20051516", 교정일:"2025.08.06", 유효기간:"2027.08.06" }
   ],
   "D2": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"210526-02",  교정일:"2025.12.15", 유효기간:"2027.12.15" },
-    { name:"Hardware box",                        sn:"20051515",  교정일:"2025.12.15", 유효기간:"2027.12.15" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"210526-02", 교정일:"2025.12.15", 유효기간:"2027.12.15" },
+    { name:"Hardware box", sn:"20051515", 교정일:"2025.12.15", 유효기간:"2027.12.15" }
   ],
   "D3": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"161129-01",  교정일:"2025.03.06", 유효기간:"2027.03.06" },
-    { name:"Hardware box",                        sn:"16102311",  교정일:"2025.03.06", 유효기간:"2027.03.06" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"161129-01", 교정일:"2025.03.06", 유효기간:"2027.03.06" },
+    { name:"Hardware box", sn:"16102311", 교정일:"2025.03.06", 유효기간:"2027.03.06" }
   ],
   "D4": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"200818-03",  교정일:"2025.04.17", 유효기간:"2027.04.17" },
-    { name:"Hardware box",                        sn:"16102312",  교정일:"2025.04.17", 유효기간:"2027.04.17" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"200818-03", 교정일:"2025.04.17", 유효기간:"2027.04.17" },
+    { name:"Hardware box", sn:"16102312", 교정일:"2025.04.17", 유효기간:"2027.04.17" }
   ],
   "D5": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"210720-01",  교정일:"2025.11.11", 유효기간:"2027.11.11" },
-    { name:"Hardware box",                        sn:"21031712",  교정일:"2025.11.11", 유효기간:"2027.11.11" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"210720-01", 교정일:"2025.11.11", 유효기간:"2027.11.11" },
+    { name:"Hardware box", sn:"21031712", 교정일:"2025.11.11", 유효기간:"2027.11.11" }
   ],
   "D6": [
-    { name:"Driftcorn PLATA System 96V-15+LPS",   sn:"191203-01",  교정일:"2025.12.15", 유효기간:"2027.12.15" },
-    { name:"Hardware box",                        sn:"17031817",  교정일:"2025.12.15", 유효기간:"2027.12.15" },
+    { name:"Driftcorn PLATA System 96V-15+LPS", sn:"191203-01", 교정일:"2025.12.15", 유효기간:"2027.12.15" },
+    { name:"Hardware box", sn:"17031817", 교정일:"2025.12.15", 유효기간:"2027.12.15" }
   ],
-  
-  "J1": [
-    { name:"Jamaica",   sn:"BR000360",  교정일:"2026.01.26", 유효기간:"2027.01.26" },
-  ],
-  "J2": [
-    { name:"Jamaica",   sn:"BR000738",  교정일:"2025.09.15", 유효기간:"2026.09.15" },
-  ],
-  "J3": [
-    { name:"Jamaica",   sn:"-",  교정일:"-", 유효기간:"-" },
-  ],
+  "J1": [{ name:"Jamaica", sn:"BR000360", 교정일:"2026.01.26", 유효기간:"2027.01.26" }],
+  "J2": [{ name:"Jamaica", sn:"BR000738", 교정일:"2025.09.15", 유효기간:"2026.09.15" }],
+  "J3": [{ name:"Jamaica", sn:"-", 교정일:"-", 유효기간:"-" }]
 };
 
 let myName = "";
 let myTools = [];
-let boardData = {};
+let reservations = [];
 let currentToolTab = "SV1";
-let isEditing = false;
-let isLoadingStatus = false;
-let isSubmitting = false;
-let isLoadingLog = false;
-
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) =>
-    b.classList.toggle('active', (tab==='main'&&i===0)||(tab==='info'&&i===1)||(tab==='log'&&i===2))
-  );
-  document.getElementById('mainSection').style.display = tab==='main' ? 'block' : 'none';
-  document.getElementById('logSection').style.display  = tab==='log'  ? 'block' : 'none';
-  document.getElementById('infoSection').style.display = tab==='info' ? 'block' : 'none';
-  if (tab==='log') loadLog();
-  if (tab==='info') renderToolInfo();
-}
-
 let showExtra = false;
+let currentTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+document.documentElement.setAttribute('data-theme', currentTheme);
 
-function renderNames() {
-  const mainBtns = MEMBERS.map(m =>
-    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
-  ).join("");
+const nameButtonsEl = document.getElementById('nameButtons');
+const toolsGridEl = document.getElementById('toolsGrid');
+const statusBoardEl = document.getElementById('statusBoard');
+const selectionSummaryEl = document.getElementById('selectionSummary');
+const startDateEl = document.getElementById('startDate');
+const endDateEl = document.getElementById('endDate');
+const reserveBtn = document.getElementById('reserveBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+const logBoardEl = document.getElementById('logBoard');
+const toastEl = document.getElementById('toast');
+const toolTabButtonsEl = document.getElementById('toolTabButtons');
+const toolInfoBoardEl = document.getElementById('toolInfoBoard');
 
-  const extraBtns = showExtra ? EXTRA_MEMBERS.map(m =>
-    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
-  ).join("") : "";
+document.querySelector('[data-theme-toggle]').addEventListener('click', () => {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.querySelector('[data-theme-toggle]').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+});
+document.querySelector('[data-theme-toggle]').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
 
-  const toggleBtn = `<button
-    class="name-btn"
-    style="background:#f0f4f8;border-color:#ddd;color:#888;font-size:0.85rem"
-    onclick="showExtra=!showExtra;renderNames()">
-    ${showExtra ? "▲ 접기" : "▼ 더보기..."}
-  </button>`;
-
-  const statusBtns = STATUS_MEMBERS.map(m =>
-    `<button class="name-btn ${myName===m?"selected":""}" onclick="selectName('${m}')">${m}</button>`
-  ).join("");
-
-  document.getElementById("nameButtons").innerHTML = mainBtns + toggleBtn + extraBtns + `<br style="width:100%">` + statusBtns;
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+function todayString() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset();
+  const local = new Date(now.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 10);
+}
+function setQuickRange(days) {
+  const start = todayString();
+  const base = new Date(start);
+  const end = new Date(base);
+  end.setDate(base.getDate() + days);
+  startDateEl.value = start;
+  endDateEl.value = end.toISOString().slice(0, 10);
+  syncSelectedMyReservations();
+  renderTools();
+  renderSelectionSummary();
+}
+function rangesOverlap(startA, endA, startB, endB) {
+  const a1 = new Date(startA + 'T00:00:00').getTime();
+  const a2 = new Date(endA + 'T23:59:59').getTime();
+  const b1 = new Date(startB + 'T00:00:00').getTime();
+  const b2 = new Date(endB + 'T23:59:59').getTime();
+  return a1 <= b2 && a2 >= b1;
+}
+function getSelectedRange() {
+  return { startDate: startDateEl.value, endDate: endDateEl.value };
+}
+function isRangeValid() {
+  const { startDate, endDate } = getSelectedRange();
+  return !!startDate && !!endDate && startDate <= endDate;
+}
+function normalizeReservations(data) {
+  if (Array.isArray(data?.reservations)) return data.reservations;
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.logs)) {
+    return data.logs.map(row => ({
+      timestamp: row[0] || '',
+      name: row[1] || '',
+      tools: row[2] ? String(row[2]).split(',').map(v => v.trim()).filter(Boolean) : [],
+      type: row[3] || '예약',
+      startDate: row[4] || '',
+      endDate: row[5] || ''
+    }));
   }
-
+  return [];
+}
+function getFilteredReservations() {
+  if (!isRangeValid()) return reservations;
+  const { startDate, endDate } = getSelectedRange();
+  return reservations.filter(item => item.startDate && item.endDate && rangesOverlap(startDate, endDate, item.startDate, item.endDate));
+}
+function getBusyToolsMap() {
+  const busy = {};
+  if (!isRangeValid()) return busy;
+  const { startDate, endDate } = getSelectedRange();
+  reservations.forEach(item => {
+    if (!item.startDate || !item.endDate) return;
+    if (!rangesOverlap(startDate, endDate, item.startDate, item.endDate)) return;
+    (item.tools || []).forEach(tool => {
+      if (item.name === myName && myTools.includes(tool)) return;
+      busy[tool] = { name: item.name, startDate: item.startDate, endDate: item.endDate };
+    });
+  });
+  return busy;
+}
+function renderNames() {
+  const mainBtns = MEMBERS.map(name => `<button class="pill ${myName === name ? 'selected' : ''}" type="button" onclick="selectName('${name}')">${name}</button>`).join('');
+  const extraBtns = showExtra
+    ? EXTRA_MEMBERS.map(name => `<button class="pill ${myName === name ? 'selected' : ''}" type="button" onclick="selectName('${name}')">${name}</button>`).join('')
+    : '';
+  const toggleBtn = `<button class="pill subtle" type="button" onclick="toggleExtraMembers()">${showExtra ? '▲ 접기' : '▼ 더보기'}</button>`;
+  const statusBtns = STATUS_MEMBERS.map(name => `<button class="pill ${myName === name ? 'selected' : ''}" type="button" onclick="selectName('${name}')">${name}</button>`).join('');
+  nameButtonsEl.innerHTML = mainBtns + toggleBtn + extraBtns + statusBtns;
+}
+function toggleExtraMembers() {
+  showExtra = !showExtra;
+  renderNames();
+}
 function selectName(name) {
   myName = name;
-  myTools = [...(boardData[name] || [])];
-  isEditing = false;
+  syncSelectedMyReservations();
   renderNames();
   renderTools();
-  document.getElementById("submitBtn").disabled = false;
-  document.getElementById("returnBtn").disabled = false;
+  renderSelectionSummary();
 }
-  
-function renderTools() {
-  const usedByOthers = {};
-  ALL_MEMBERS.forEach(m => {
-    if (m === myName) return;
-    (boardData[m] || []).forEach(t => { usedByOthers[t] = m; });
+function syncSelectedMyReservations() {
+  myTools = [];
+  if (!myName || !isRangeValid()) return;
+  const { startDate, endDate } = getSelectedRange();
+  reservations.forEach(item => {
+    if (item.name === myName && item.startDate === startDate && item.endDate === endDate) {
+      myTools.push(...(item.tools || []));
+    }
   });
-
-  document.getElementById("toolsGrid").innerHTML = TOOL_GROUPS.map(group => `
+  myTools = [...new Set(myTools)];
+}
+function toggleTool(tool) {
+  if (!myName) return showToast('이름을 먼저 선택하세요.');
+  if (!isRangeValid()) return showToast('시작일과 종료일을 먼저 지정하세요.');
+  const busyMap = getBusyToolsMap();
+  if (busyMap[tool] && !myTools.includes(tool)) {
+    return showToast(`${tool}은(는) ${busyMap[tool].name} 예약과 기간이 겹칩니다.`);
+  }
+  if (myTools.includes(tool)) myTools = myTools.filter(item => item !== tool);
+  else myTools = [...myTools, tool];
+  renderTools();
+  renderSelectionSummary();
+}
+function renderTools() {
+  const busyMap = getBusyToolsMap();
+  toolsGridEl.innerHTML = TOOL_GROUPS.map(group => `
     <div class="tool-group">
       <div class="tool-group-label">${group.label}</div>
       <div class="tools-grid">
-        ${group.tools.map(t => {
-          const other = usedByOthers[t];
-          const isSelected = myTools.includes(t);
-          const isUsed = other && !isSelected;
-          return `<button
-            class="tool-btn ${isSelected?'selected':''} ${isUsed?'used-by-other':''}"
-            onclick="toggleTool('${t}')"
-            ${isUsed?'disabled':''}
-            title="${isUsed?other+' 사용 중':''}"
-          >${t}${isUsed?`<br><span style="font-size:0.65rem;font-weight:400">${other}</span>`:''}</button>`;
-        }).join("")}
+        ${group.tools.map(tool => {
+          const selected = myTools.includes(tool);
+          const busy = busyMap[tool] && !selected;
+          const subtitle = busy ? `<span class="sub">${busyMap[tool].name}</span>` : '';
+          return `<button type="button" class="tool-btn ${selected ? 'selected' : ''} ${busy ? 'blocked' : ''}" ${busy ? 'disabled' : ''} onclick="toggleTool('${tool}')">${tool}${subtitle}</button>`;
+        }).join('')}
       </div>
     </div>
-  `).join("");
+  `).join('');
 }
+function renderSelectionSummary() {
+  const { startDate, endDate } = getSelectedRange();
+  reserveBtn.disabled = !(myName && isRangeValid() && myTools.length);
+  cancelBtn.disabled = !(myName && reservations.some(item => item.name === myName));
 
-function toggleTool(tool) {
-  if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
-  isEditing = true;
-  myTools = myTools.includes(tool) ? myTools.filter(t=>t!==tool) : [...myTools, tool];
-  renderTools();
-}
-
-async function submitStatus(type) {
-  if (!myName) { showToast("이름을 선택하세요!"); return; }
-  if (isSubmitting) return;
-
-  isSubmitting = true;
-
-  const btn = document.getElementById(type === '출고' ? "submitBtn" : "returnBtn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>처리 중...';
-
-  try {
-    await fetch(GAS_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ name: myName, tools: myTools, type: type })
-    });
-    boardData[myName] = [...myTools];
-    isEditing = false;
-    renderTools();
-    renderBoard();
-    showToast(`✅ ${myName} ${type} 완료!`);
-  } catch(e) {
-    console.error(e);
-    showToast("❌ 처리 실패.");
-  } finally {
-    isSubmitting = false;
-    btn.disabled = false;
-    btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
-  }
-}
-
-  
-async function loadStatus() {
-  if (isLoadingStatus || isSubmitting) return;
-  isLoadingStatus = true;
-
-  try {
-    const res = await fetch(GAS_URL + "?action=get");
-    if (!res.ok) throw new Error("HTTP " + res.status);
-
-    const data = await res.json();
-    boardData = data || {};
-
-    if (myName && !isEditing) {
-      myTools = [...(boardData[myName] || [])];
-    }
-
-    renderTools();
-    renderBoard();
-  } catch (e) {
-    console.error(e);
-    document.getElementById("statusBoard").innerHTML =
-      '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
-  } finally {
-    isLoadingStatus = false;
-  }
-}
-
-function renderBoard() {
-  const activeMembers = ALL_MEMBERS.filter(m => (boardData[m] || []).length > 0);
-
-  if (activeMembers.length === 0) {
-    document.getElementById("statusBoard").innerHTML =
-      '<div class="loading">현재 사용 중인 툴이 없습니다.</div>';
+  if (!myName) {
+    selectionSummaryEl.textContent = '예약자를 선택하세요.';
     return;
   }
+  if (!startDate || !endDate) {
+    selectionSummaryEl.textContent = `${myName} 예약 기간을 먼저 입력하세요.`;
+    return;
+  }
+  if (startDate > endDate) {
+    selectionSummaryEl.textContent = '종료일은 시작일보다 빠를 수 없습니다.';
+    return;
+  }
+  const toolText = myTools.length ? myTools.join(', ') : '선택된 툴 없음';
+  selectionSummaryEl.innerHTML = `<strong>${myName}</strong><br>${formatDate(startDate)} ~ ${formatDate(endDate)}<br>${toolText}`;
+}
+function renderBoard() {
+  const grouped = ALL_MEMBERS.map(name => {
+    const mine = reservations.filter(item => item.name === name);
+    return { name, items: mine };
+  });
+  document.getElementById('kpiTotalTools').textContent = TOOLS.length;
+  document.getElementById('kpiReservations').textContent = reservations.length;
+  document.getElementById('kpiBusyTools').textContent = new Set(reservations.flatMap(item => item.tools || [])).size;
 
-  document.getElementById("statusBoard").innerHTML = activeMembers.map(m => {
-    const tools = boardData[m] || [];
+  statusBoardEl.innerHTML = grouped.map(group => {
+    if (!group.items.length) {
+      return `
+        <div class="member-row">
+          <div class="avatar">${group.name.charAt(0)}</div>
+          <div>
+            <div class="row-title">${group.name}</div>
+            <div class="row-sub">예약 없음</div>
+          </div>
+          <div class="badge warning">비어 있음</div>
+        </div>`;
+    }
     return `
       <div class="member-row">
-        <div class="avatar">${m.charAt(0)}</div>
-        <div style="flex:1;">
-          <div class="member-name">${m}</div>
-          <div class="tool-tags">
-            ${tools.map(t=>`<span class="tool-tag">${t}</span>`).join("")}
-          </div>
+        <div class="avatar">${group.name.charAt(0)}</div>
+        <div>
+          <div class="row-title">${group.name}</div>
+          ${group.items.map(item => `
+            <div class="row-sub">${formatDate(item.startDate)} ~ ${formatDate(item.endDate)}</div>
+            <div class="tag-wrap">${(item.tools || []).map(tool => `<span class="tag">${tool}</span>`).join('')}</div>
+          `).join('')}
         </div>
+        <div class="badge success">${group.items.length}건</div>
       </div>`;
-  }).join("");
+  }).join('');
 }
-
-async function resetMyStatus() {
-  if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
-  if (isSubmitting) return;
-  if (!confirm(`${myName}의 상태를 초기화할까요?`)) return;
-
-  isSubmitting = true;
+function loadLog() {
+  if (!reservations.length) {
+    logBoardEl.innerHTML = '<div class="empty">로그가 없습니다.</div>';
+    return;
+  }
+  const rows = [...reservations].sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
+  logBoardEl.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>등록시간</th>
+            <th>이름</th>
+            <th>기간</th>
+            <th>예약 툴</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(item => `
+            <tr>
+              <td>${item.timestamp ? new Date(item.timestamp).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) : '-'}</td>
+              <td>${item.name || '-'}</td>
+              <td>${item.startDate && item.endDate ? `${item.startDate} ~ ${item.endDate}` : '-'}</td>
+              <td><div class="inline-tools">${(item.tools || []).length ? item.tools.map(tool => `<span class="tag">${tool}</span>`).join('') : '<span class="small-muted">없음</span>'}</div></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+function getExpiryClass(dateStr) {
+  if (!dateStr || dateStr === '-') return 'badge warning';
+  const [y, m, d] = dateStr.split('.').map(Number);
+  const expiry = new Date(y, m - 1, d);
+  const today = new Date();
+  const diff = (expiry - today) / 86400000;
+  if (diff < 0) return 'badge danger';
+  if (diff < 90) return 'badge warning';
+  return 'badge success';
+}
+function renderToolTabs() {
+  toolTabButtonsEl.innerHTML = Object.keys(TOOL_INFO).map(tool => `
+    <button type="button" class="pill ${currentToolTab === tool ? 'selected' : ''}" onclick="selectToolTab('${tool}')">${tool}</button>
+  `).join('');
+}
+function selectToolTab(tool) {
+  currentToolTab = tool;
+  renderToolTabs();
+  renderToolInfo();
+}
+function renderToolInfo() {
+  const items = TOOL_INFO[currentToolTab] || [];
+  if (!items.length) {
+    toolInfoBoardEl.innerHTML = '<div class="empty">등록된 정보가 없습니다.</div>';
+    return;
+  }
+  toolInfoBoardEl.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>시험장비명</th>
+            <th>S/N</th>
+            <th>교정일자</th>
+            <th>유효기간</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map(item => `
+            <tr>
+              <td>${item.name}</td>
+              <td>${item.sn}</td>
+              <td>${item.교정일}</td>
+              <td><span class="${getExpiryClass(item.유효기간)}">${item.유효기간}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.add('show');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toastEl.classList.remove('show'), 2400);
+}
+function updateTime() {
+  document.getElementById('currentTime').textContent = new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+}
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
+  document.querySelectorAll('.tab-section').forEach(section => section.classList.add('hidden'));
+  document.getElementById(tabName + 'Section').classList.remove('hidden');
+  if (tabName === 'log') loadLog();
+  if (tabName === 'info') renderToolInfo();
+}
+function clearSelection() {
   myTools = [];
-  isEditing = false;
   renderTools();
+  renderSelectionSummary();
+  showToast('현재 선택을 초기화했습니다.');
+}
+async function saveReservation() {
+  if (!myName) return showToast('이름을 선택하세요.');
+  if (!isRangeValid()) return showToast('예약 기간을 올바르게 입력하세요.');
+  if (!myTools.length) return showToast('예약할 툴을 선택하세요.');
+
+  const payload = {
+    action: 'reserve',
+    name: myName,
+    tools: myTools,
+    startDate: startDateEl.value,
+    endDate: endDateEl.value,
+    type: '예약'
+  };
+
+  try {
+    const conflict = reservations.some(item => item.name !== myName && rangesOverlap(payload.startDate, payload.endDate, item.startDate, item.endDate) && (item.tools || []).some(tool => myTools.includes(tool)));
+    if (conflict) return showToast('같은 기간에 이미 예약된 툴이 있습니다.');
+
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+
+    reservations = reservations.filter(item => !(item.name === myName && item.startDate === payload.startDate && item.endDate === payload.endDate));
+    reservations.unshift({
+      timestamp: new Date().toISOString(),
+      name: myName,
+      tools: [...myTools],
+      type: '예약',
+      startDate: payload.startDate,
+      endDate: payload.endDate
+    });
+    renderBoard();
+    loadLog();
+    renderTools();
+    renderSelectionSummary();
+    showToast('예약을 저장했습니다.');
+  } catch (error) {
+    console.error(error);
+    showToast('예약 저장에 실패했습니다.');
+  }
+}
+async function cancelMyReservations() {
+  if (!myName) return showToast('이름을 먼저 선택하세요.');
+  const hasMine = reservations.some(item => item.name === myName);
+  if (!hasMine) return showToast('삭제할 예약이 없습니다.');
 
   try {
     await fetch(GAS_URL, {
-      method: "POST", mode: "no-cors",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ name: myName, tools: [], type: "초기화" })
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'cancelByName', name: myName, type: '예약취소' })
     });
-    boardData[myName] = [];
+    reservations = reservations.filter(item => item.name !== myName);
+    myTools = [];
     renderBoard();
-    showToast(`🔄 ${myName} 초기화 완료`);
-  } catch (e) {
-    console.error(e);
-    showToast("❌ 초기화 실패.");
-  } finally {
-    isSubmitting = false;
+    loadLog();
+    renderTools();
+    renderSelectionSummary();
+    showToast(`${myName} 예약을 전체 해제했습니다.`);
+  } catch (error) {
+    console.error(error);
+    showToast('예약 해제에 실패했습니다.');
   }
 }
-
-async function loadLog() {
-  if (isLoadingLog) return;
-  isLoadingLog = true;
-
-  document.getElementById('logBoard').innerHTML = '<div class="log-empty"><span class="spinner"></span> 불러오는 중...</div>';
+async function loadReservations() {
   try {
-    const res = await fetch(GAS_URL + "?action=log");
+    const res = await fetch(GAS_URL + '?action=getReservations');
     const data = await res.json();
-    if (!data.logs || data.logs.length === 0) {
-      document.getElementById('logBoard').innerHTML = '<div class="log-empty">아직 기록이 없습니다</div>';
-      return;
+    reservations = normalizeReservations(data).map(item => ({
+      timestamp: item.timestamp || item.time || '',
+      name: item.name || '',
+      tools: Array.isArray(item.tools) ? item.tools : String(item.tools || '').split(',').map(v => v.trim()).filter(Boolean),
+      type: item.type || '예약',
+      startDate: item.startDate || '',
+      endDate: item.endDate || ''
+    })).filter(item => item.name);
+  } catch (error) {
+    console.warn('getReservations 실패, log 형식으로 재시도합니다.', error);
+    try {
+      const res = await fetch(GAS_URL + '?action=log');
+      const data = await res.json();
+      reservations = normalizeReservations(data).filter(item => item.startDate && item.endDate);
+    } catch (innerError) {
+      console.error(innerError);
+      reservations = [];
+      showToast('원격 데이터를 불러오지 못했습니다.');
     }
-    const rows = [...data.logs].slice(0, 500).map(row => {
-      const dateStr = row[0] ? new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"}) : "-";
-      const tools = row[2] && row[2] !== '없음'
-        ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
-        : '<span style="color:#bbb">없음</span>';
-      const typeLabel = row[3] === '출고'
-        ? `<span style="background:#e6f7f4;color:#0d7c6e;border-radius:100px;padding:2px 10px;font-size:0.8rem;font-weight:700">📤 출고</span>`
-        : row[3] === '반납'
-        ? `<span style="background:#fff0f0;color:#e53e3e;border-radius:100px;padding:2px 10px;font-size:0.8rem;font-weight:700">📥 반납</span>`
-        : `<span style="color:#bbb">-</span>`;
-      return `<tr><td style="white-space:nowrap">${dateStr}</td><td><strong>${row[1]}</strong></td><td>${typeLabel}</td><td>${tools}</td></tr>`;
-    }).join('');
-
-    document.getElementById('logBoard').innerHTML = `
-      <div style="overflow-x:auto">
-      <table class="log-table">
-        <thead><tr><th>시간</th><th>이름</th><th>구분</th><th>사용 툴</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>`;
-  } catch(e) {
-    console.error(e);
-    document.getElementById('logBoard').innerHTML = '<div class="log-empty">❌ 로그를 불러올 수 없습니다</div>';
-  } finally {
-    isLoadingLog = false;
   }
+  syncSelectedMyReservations();
+  renderTools();
+  renderBoard();
+  loadLog();
+  renderSelectionSummary();
 }
 
-function selectToolTab(tool) {
-  currentToolTab = tool;
-  document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('selected'));
-  document.getElementById('tab-' + tool).classList.add('selected');
-  renderToolInfo();
-}
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+startDateEl.addEventListener('change', () => {
+  if (endDateEl.value && startDateEl.value > endDateEl.value) endDateEl.value = startDateEl.value;
+  syncSelectedMyReservations();
+  renderTools();
+  renderSelectionSummary();
+});
+endDateEl.addEventListener('change', () => {
+  syncSelectedMyReservations();
+  renderTools();
+  renderSelectionSummary();
+});
+reserveBtn.addEventListener('click', saveReservation);
+cancelBtn.addEventListener('click', cancelMyReservations);
+clearSelectionBtn.addEventListener('click', clearSelection);
 
-function getExpiryClass(dateStr) {
-  if (!dateStr || dateStr === '-') return '';
-  const parts = dateStr.split('.');
-  if (parts.length < 3) return '';
-  const expiry = new Date(parts[0], parts[1]-1, parts[2]);
-  const now = new Date();
-  const diff = (expiry - now) / (1000 * 60 * 60 * 24);
-  if (diff < 0) return 'expired';
-  if (diff < 90) return 'expiring-soon';
-  return 'valid';
-}
-
-function renderToolInfo() {
-  const items = TOOL_INFO[currentToolTab] || [];
-  if (items.length === 0) {
-    document.getElementById('toolInfoBoard').innerHTML = '<div class="log-empty">정보가 없습니다</div>';
-    return;
-  }
-  const rows = items.map(item => {
-    const cls = getExpiryClass(item.유효기간);
-    return `<tr>
-      <td>${item.name}</td>
-      <td>${item.sn}</td>
-      <td>${item.교정일}</td>
-      <td class="${cls}">${item.유효기간}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('toolInfoBoard').innerHTML = `
-    <div style="overflow-x:auto">
-    <table class="info-table">
-      <thead><tr><th>시험장비명</th><th>S/N (ID)</th><th>교정일자</th><th>유효기간</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>`;
-}
-
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2500);
-}
-
-function updateTime() {
-  document.getElementById("currentTime").textContent =
-    new Date().toLocaleDateString("ko-KR") + " " + new Date().toLocaleTimeString("ko-KR");
-}
-
-setInterval(loadStatus, 30000);
-setInterval(updateTime, 1000);
 renderNames();
+renderToolTabs();
+renderToolInfo();
 renderTools();
-loadStatus();
+renderSelectionSummary();
+setQuickRange(0);
+loadReservations();
 updateTime();
+setInterval(updateTime, 1000);
+setInterval(loadReservations, 30000);
 </script>
 </body>
 </html>
