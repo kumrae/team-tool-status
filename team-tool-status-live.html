@@ -288,6 +288,7 @@ let myName = "";
 let myTools = [];
 let boardData = {};
 let currentToolTab = "SV1";
+let isEditing = false;
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
@@ -326,6 +327,7 @@ function renderNames() {
   }
 
 function selectName(name) {
+  isEditing = false;
   myName = name;
   myTools = [...(boardData[name] || [])];
   renderNames();
@@ -333,7 +335,7 @@ function selectName(name) {
   document.getElementById("submitBtn").disabled = false;
   document.getElementById("returnBtn").disabled = false;
 }
-
+  
 function renderTools() {
   const usedByOthers = {};
   ALL_MEMBERS.forEach(m => {
@@ -363,6 +365,7 @@ function renderTools() {
 
 function toggleTool(tool) {
   if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
+  isEditing = true;
   myTools = myTools.includes(tool) ? myTools.filter(t=>t!==tool) : [...myTools, tool];
   renderTools();
 }
@@ -373,26 +376,35 @@ async function submitStatus(type) {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>처리 중...';
   try {
-    fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: "POST", mode: "no-cors",
       headers: { "Content-Type": "text/plain" },
       body: JSON.stringify({ name: myName, tools: myTools, type: type })
     });
     boardData[myName] = [...myTools];
+    isEditing = false;
     renderBoard();
     showToast(`✅ ${myName} ${type} 완료!`);
-  } catch(e) { showToast("❌ 처리 실패."); }
+  } catch(e) {
+    showToast("❌ 처리 실패.");
+  }
   btn.disabled = false;
   btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
 }
 
+  
 async function loadStatus() {
   try {
     const res = await fetch(GAS_URL + "?action=get");
     if (!res.ok) throw new Error("HTTP " + res.status);
+
     const data = await res.json();
     boardData = data || {};
-    if (myName) myTools = [...(boardData[myName] || [])];
+
+    if (myName && !isEditing) {
+      myTools = [...(boardData[myName] || [])];
+    }
+
     renderTools();
     renderBoard();
   } catch (e) {
@@ -422,6 +434,7 @@ async function resetMyStatus() {
   if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
   if (!confirm(`${myName}의 상태를 초기화할까요?`)) return;
   myTools = [];
+  isEditing = false;
   renderTools();
   fetch(GAS_URL, {
     method: "POST", mode: "no-cors",
