@@ -289,6 +289,9 @@ let myTools = [];
 let boardData = {};
 let currentToolTab = "SV1";
 let isEditing = false;
+let isLoadingStatus = false;
+let isSubmitting = false;
+let isLoadingLog = false;
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
@@ -372,9 +375,14 @@ function toggleTool(tool) {
 
 async function submitStatus(type) {
   if (!myName) { showToast("이름을 선택하세요!"); return; }
+  if (isSubmitting) return;
+
+  isSubmitting = true;
+
   const btn = document.getElementById(type === '출고' ? "submitBtn" : "returnBtn");
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>처리 중...';
+
   try {
     await fetch(GAS_URL, {
       method: "POST", mode: "no-cors",
@@ -383,17 +391,24 @@ async function submitStatus(type) {
     });
     boardData[myName] = [...myTools];
     isEditing = false;
+    renderTools();
     renderBoard();
     showToast(`✅ ${myName} ${type} 완료!`);
   } catch(e) {
+    console.error(e);
     showToast("❌ 처리 실패.");
+  } finally {
+    isSubmitting = false;
+    btn.disabled = false;
+    btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
   }
-  btn.disabled = false;
-  btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
 }
 
   
 async function loadStatus() {
+  if (isLoadingStatus || isSubmitting) return;
+  isLoadingStatus = true;
+
   try {
     const res = await fetch(GAS_URL + "?action=get");
     if (!res.ok) throw new Error("HTTP " + res.status);
@@ -411,6 +426,8 @@ async function loadStatus() {
     console.error(e);
     document.getElementById("statusBoard").innerHTML =
       '<div class="loading">⚠️ 데이터를 불러올 수 없습니다.</div>';
+  } finally {
+    isLoadingStatus = false;
   }
 }
 
@@ -432,21 +449,35 @@ function renderBoard() {
 
 async function resetMyStatus() {
   if (!myName) { showToast("이름을 먼저 선택하세요!"); return; }
+  if (isSubmitting) return;
   if (!confirm(`${myName}의 상태를 초기화할까요?`)) return;
+
+  isSubmitting = true;
   myTools = [];
   isEditing = false;
   renderTools();
-  fetch(GAS_URL, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "text/plain" },
-    body: JSON.stringify({ name: myName, tools: [] })
-  });
-  boardData[myName] = [];
-  renderBoard();
-  showToast(`🔄 ${myName} 초기화 완료`);
+
+  try {
+    await fetch(GAS_URL, {
+      method: "POST", mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ name: myName, tools: [], type: "초기화" })
+    });
+    boardData[myName] = [];
+    renderBoard();
+    showToast(`🔄 ${myName} 초기화 완료`);
+  } catch (e) {
+    console.error(e);
+    showToast("❌ 초기화 실패.");
+  } finally {
+    isSubmitting = false;
+  }
 }
 
 async function loadLog() {
+  if (isLoadingLog) return;
+  isLoadingLog = true;
+
   document.getElementById('logBoard').innerHTML = '<div class="log-empty"><span class="spinner"></span> 불러오는 중...</div>';
   try {
     const res = await fetch(GAS_URL + "?action=log");
@@ -455,7 +486,7 @@ async function loadLog() {
       document.getElementById('logBoard').innerHTML = '<div class="log-empty">아직 기록이 없습니다</div>';
       return;
     }
-    const rows = [...data.logs].slice(0, 500).map(row => {
+    const rows = [...data.logs].reverse().slice(0, 500).map(row => {
       const dateStr = row[0] ? new Date(row[0]).toLocaleString("ko-KR", {timeZone:"Asia/Seoul"}) : "-";
       const tools = row[2] && row[2] !== '없음'
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
@@ -467,15 +498,18 @@ async function loadLog() {
         : `<span style="color:#bbb">-</span>`;
       return `<tr><td style="white-space:nowrap">${dateStr}</td><td><strong>${row[1]}</strong></td><td>${typeLabel}</td><td>${tools}</td></tr>`;
     }).join('');
+
     document.getElementById('logBoard').innerHTML = `
       <div style="overflow-x:auto">
       <table class="log-table">
         <thead><tr><th>시간</th><th>이름</th><th>구분</th><th>사용 툴</th></tr></thead>
-
         <tbody>${rows}</tbody>
       </table></div>`;
   } catch(e) {
+    console.error(e);
     document.getElementById('logBoard').innerHTML = '<div class="log-empty">❌ 로그를 불러올 수 없습니다</div>';
+  } finally {
+    isLoadingLog = false;
   }
 }
 
