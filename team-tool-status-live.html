@@ -432,7 +432,15 @@ async function loadStatus() {
 }
 
 function renderBoard() {
-  document.getElementById("statusBoard").innerHTML = ALL_MEMBERS.map(m => {
+  const activeMembers = ALL_MEMBERS.filter(m => (boardData[m] || []).length > 0);
+
+  if (activeMembers.length === 0) {
+    document.getElementById("statusBoard").innerHTML =
+      '<div class="loading">현재 사용 중인 툴이 없습니다.</div>';
+    return;
+  }
+
+  document.getElementById("statusBoard").innerHTML = activeMembers.map(m => {
     const tools = boardData[m] || [];
     return `
       <div class="member-row">
@@ -440,7 +448,7 @@ function renderBoard() {
         <div style="flex:1;">
           <div class="member-name">${m}</div>
           <div class="tool-tags">
-            ${tools.length ? tools.map(t=>`<span class="tool-tag">${t}</span>`).join("") : '<span class="no-tool">사용 중인 툴 없음</span>'}
+            ${tools.map(t=>`<span class="tool-tag">${t}</span>`).join("")}
           </div>
         </div>
       </div>`;
