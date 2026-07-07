@@ -949,11 +949,13 @@ function clearSelection() {
   myTools = [];
   startDateEl.value = "";
   endDateEl.value = "";
+  syncSelectedMyReservations();
   renderNames();
   renderTools();
   renderSelectionSummary();
   showToast('현재 선택을 초기화했습니다.');
 }
+  
 async function saveReservation() {
   if (!myName) return showToast('이름을 선택하세요.');
   if (!isRangeValid()) return showToast('예약 기간을 올바르게 입력하세요.');
@@ -998,28 +1000,34 @@ async function saveReservation() {
     
 async function cancelMyReservations() {
   if (!myName) return showToast('이름을 먼저 선택하세요.');
-  const hasMine = reservations.some(item => item.name === myName);
-  if (!hasMine) return showToast('삭제할 예약이 없습니다.');
+  if (!isRangeValid()) return showToast('해제할 기간을 먼저 선택하세요.');
 
   try {
     cancelBtn.disabled = true;
+
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'cancelByName', name: myName, type: '예약취소' })
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'cancelByRange',
+        name: myName,
+        startDate: startDateEl.value,
+        endDate: endDateEl.value,
+        type: '예약구간취소'
+      })
     });
-    
+
     myTools = [];
     await loadReservations();
-    showToast(`${myName} 예약을 전체 해제했습니다.`);
+    showToast(`${myName} 예약을 해제했습니다.`);
   } catch (error) {
     console.error(error);
     showToast('예약 해제에 실패했습니다.');
   } finally {
     cancelBtn.disabled = false;
   }
-} 
+}
   
 async function loadReservations() {
   try {
