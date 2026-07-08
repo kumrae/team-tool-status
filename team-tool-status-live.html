@@ -510,10 +510,7 @@ input, select, button {
       <select class="reserve-select" id="reserveName"></select>
       <select class="reserve-select" id="reserveTool"></select>
 
-      <div class="reserve-row">
-        <input class="reserve-input" type="time" id="startTime">
-        <input class="reserve-input" type="time" id="endTime">
-      </div>
+  
 
       <input class="reserve-text" type="text" id="reserveMemo" placeholder="메모 (선택)">
       <button class="submit-btn" onclick="submitReservation()" style="margin-bottom:0">예약 등록</button>
@@ -812,12 +809,11 @@ async function submitReservation() {
   const name = document.getElementById("reserveName").value;
   const tool = document.getElementById("reserveTool").value;
   const date = document.getElementById("reserveDate").value;
-  const startTime = document.getElementById("startTime").value;
-  const endTime = document.getElementById("endTime").value;
+  
   const memo = document.getElementById("reserveMemo").value.trim();
 
-  if (!name || !tool || !date || !startTime || !endTime) {
-    showToast("⚠️ 날짜, 이름, 툴, 시간을 모두 입력하세요");
+  if (!name || !tool || !date) {
+    showToast("⚠️ 날짜, 이름, 툴을 모두 입력하세요");
     return;
   }
 
@@ -835,8 +831,6 @@ async function submitReservation() {
         name,
         tool,
         date,
-        startTime,
-        endTime,
         memo
       })
     });
@@ -853,6 +847,31 @@ async function submitReservation() {
   } catch (e) {
     console.error(e);
     showToast("❌ 예약 등록 실패");
+  }
+}
+
+
+
+async function cancelReservation(id) {
+  if (!confirm("이 예약을 취소할까요?")) return;
+
+  try {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify({ action: "cancelReservation", id })
+    });
+
+    const data = await res.json();
+    if (data.status === "ok") {
+      showToast("✅ 예약 취소 완료");
+      loadReservations();
+    } else {
+      showToast("⚠️ " + (data.message || "예약 취소 실패"));
+    }
+  } catch (e) {
+    console.error(e);
+    showToast("❌ 예약 취소 실패");
   }
 }
 
@@ -878,7 +897,6 @@ async function loadReservations() {
     const rows = list.map(r => `
       <tr>
         <td>${r.tool}</td>
-        <td>${r.startTime} ~ ${r.endTime}</td>
         <td>${r.name}</td>
         <td>${r.memo || "-"}</td>
         <td><button class="mini-btn" onclick="cancelReservation('${r.id}')">취소</button></td>
@@ -891,7 +909,6 @@ async function loadReservations() {
           <thead>
             <tr>
               <th>툴</th>
-              <th>시간</th>
               <th>이름</th>
               <th>메모</th>
               <th>취소</th>
@@ -908,30 +925,6 @@ async function loadReservations() {
     isLoadingReservation = false;
   }
 }
-
-async function cancelReservation(id) {
-  if (!confirm("이 예약을 취소할까요?")) return;
-
-  try {
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: JSON.stringify({ action: "cancelReservation", id })
-    });
-
-    const data = await res.json();
-    if (data.status === "ok") {
-      showToast("✅ 예약 취소 완료");
-      loadReservations();
-    } else {
-      showToast("⚠️ " + (data.message || "예약 취소 실패"));
-    }
-  } catch (e) {
-    console.error(e);
-    showToast("❌ 예약 취소 실패");
-  }
-}
-
 async function submitStatus(type) {
   if (!myName) {
     showToast("이름을 선택하세요!");
