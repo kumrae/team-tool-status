@@ -1,8 +1,4 @@
-좋아. 아래는 네 기존 화면 기준으로 예약 탭까지 포함해서 정리한 HTML 전체 수정본이다. DOMContentLoaded 초기화, 예약 탭 중복 제거, 날짜 변경 시 예약 자동 조회, 입력 검증, 에러 처리까지 반영했다. DOMContentLoaded는 문서 파싱이 끝난 뒤 초기화 코드를 실행할 때 적절하고, change 이벤트는 input, select, textarea 값이 바뀌었을 때 연결하기에 맞다.
 
-주의할 점 하나는, 이 HTML은 GAS 쪽에 action=reservations, action=reserve, action=cancelReservation 처리 로직이 이미 추가되어 있어야 정상 동작한다는 점이다.
-
-xml
 <!DOCTYPE html>
 <html lang="ko">
 <head>
