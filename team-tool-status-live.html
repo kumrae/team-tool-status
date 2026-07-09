@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -156,6 +155,20 @@ input, select, button {
   opacity: 0.6;
 }
 
+.tool-btn.reserved {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.85;
+}
+
+.tool-btn.reserve-selected {
+  background: #e6f7f4;
+  border-color: #0d7c6e;
+  color: #0d7c6e;
+}
+
 .submit-btn {
   width: 100%;
   padding: 16px;
@@ -246,11 +259,6 @@ input, select, button {
   padding: 3px 10px;
   font-size: 0.8rem;
   font-weight: 600;
-}
-
-.no-tool {
-  color: #bbb;
-  font-size: 0.85rem;
 }
 
 .guide {
@@ -458,7 +466,6 @@ input, select, button {
   <button class="tab-btn" data-tab="reserve" onclick="switchTab('reserve')">📅 예약</button>
 </div>
 
-<!-- 현황 탭 -->
 <div id="mainSection">
   <div class="guide">
     ✅ <strong>사용법:</strong> 이름 선택 → 현재 사용 중인 툴 선택 → 출고<br>
@@ -492,7 +499,6 @@ input, select, button {
   </div>
 </div>
 
-<!-- 변경로그 탭 -->
 <div id="logSection" style="display:none">
   <button class="log-refresh-btn" onclick="loadLog()">🔄 로그 새로고침</button>
   <div class="card">
@@ -501,29 +507,33 @@ input, select, button {
   </div>
 </div>
 
-<!-- 예약 탭 -->
 <div id="reserveSection" style="display:none">
   <div class="card">
-    <h2>📅 예약 등록</h2>
+    <h2>📅 기간 예약 등록</h2>
     <div class="reserve-form">
-      <input class="reserve-input" type="date" id="reserveDate">
+      <div class="reserve-row">
+        <input class="reserve-input" type="date" id="reserveStartDate">
+        <input class="reserve-input" type="date" id="reserveEndDate">
+      </div>
+
       <select class="reserve-select" id="reserveName"></select>
-      <select class="reserve-select" id="reserveTool"></select>
-
-  
-
       <input class="reserve-text" type="text" id="reserveMemo" placeholder="메모 (선택)">
+
+      <div class="card" style="padding:14px;margin-bottom:0;box-shadow:none;border:1px solid #eef2f5">
+        <h2 style="margin-bottom:10px">🔧 예약할 툴 선택</h2>
+        <div id="reserveToolsGrid"></div>
+      </div>
+
       <button class="submit-btn" onclick="submitReservation()" style="margin-bottom:0">예약 등록</button>
     </div>
   </div>
 
   <div class="card">
     <h2>📋 예약 목록</h2>
-    <div id="reservationBoard"><div class="log-empty">날짜를 선택하세요</div></div>
+    <div id="reservationBoard"><div class="log-empty">기간을 선택하세요</div></div>
   </div>
 </div>
 
-<!-- 툴 정보 탭 -->
 <div id="infoSection" style="display:none">
   <div class="card">
     <h2>🔍 툴 정보</h2>
@@ -669,6 +679,8 @@ let isLoadingStatus = false;
 let isSubmitting = false;
 let isLoadingLog = false;
 let isLoadingReservation = false;
+let reservationData = [];
+let selectedReserveTool = "";
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -717,8 +729,8 @@ function renderNames() {
 
 function initReservationForm() {
   const reserveName = document.getElementById("reserveName");
-  const reserveTool = document.getElementById("reserveTool");
-  const reserveDate = document.getElementById("reserveDate");
+  const startDate = document.getElementById("reserveStartDate");
+  const endDate = document.getElementById("reserveEndDate");
 
   if (reserveName && reserveName.options.length === 0) {
     reserveName.innerHTML = [...MEMBERS, ...EXTRA_MEMBERS]
@@ -726,23 +738,18 @@ function initReservationForm() {
       .join("");
   }
 
-  if (reserveTool && reserveTool.options.length === 0) {
-    reserveTool.innerHTML = TOOLS
-      .map(tool => `<option value="${tool}">${tool}</option>`)
-      .join("");
-  }
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  const todayStr = `${y}-${m}-${d}`;
 
-  if (reserveDate && !reserveDate.value) {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    reserveDate.value = `${y}-${m}-${d}`;
-  }
+  if (startDate && !startDate.value) startDate.value = todayStr;
+  if (endDate && !endDate.value) endDate.value = todayStr;
 
-  if (myName && reserveName) {
-    reserveName.value = myName;
-  }
+  if (myName && reserveName) reserveName.value = myName;
+
+  renderReserveTools();
 }
 
 function selectName(name) {
@@ -805,20 +812,69 @@ function toggleTool(tool) {
   renderTools();
 }
 
+function isDateRangeOverlapped(startA, endA, startB, endB) {
+  return startA <= endB && endA >= startB;
+}
+
+function renderReserveTools() {
+  const startDate = document.getElementById("reserveStartDate")?.value;
+  const endDate = document.getElementById("reserveEndDate")?.value;
+
+  const reservedTools = {};
+
+  if (startDate && endDate) {
+    reservationData.forEach(r => {
+      if (isDateRangeOverlapped(startDate, endDate, r.startDate, r.endDate)) {
+        reservedTools[r.tool] = r.name;
+      }
+    });
+  }
+
+  document.getElementById("reserveToolsGrid").innerHTML = TOOL_GROUPS.map(group => `
+    <div class="tool-group">
+      <div class="tool-group-label">${group.label}</div>
+      <div class="tools-grid">
+        ${group.tools.map(tool => {
+          const reservedBy = reservedTools[tool];
+          const isReserved = !!reservedBy;
+          const isSelected = selectedReserveTool === tool && !isReserved;
+
+          return `
+            <button
+              class="tool-btn ${isReserved ? 'reserved' : ''} ${isSelected ? 'reserve-selected' : ''}"
+              onclick="selectReserveTool('${tool}')"
+              ${isReserved ? 'disabled' : ''}
+              title="${isReserved ? reservedBy + ' 예약 중' : ''}"
+            >
+              ${tool}
+              ${isReserved ? `<br><span style="font-size:0.65rem;font-weight:400">${reservedBy}</span>` : ''}
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+function selectReserveTool(tool) {
+  selectedReserveTool = tool;
+  renderReserveTools();
+}
+
 async function submitReservation() {
   const name = document.getElementById("reserveName").value;
-  const tool = document.getElementById("reserveTool").value;
-  const date = document.getElementById("reserveDate").value;
-  
+  const startDate = document.getElementById("reserveStartDate").value;
+  const endDate = document.getElementById("reserveEndDate").value;
   const memo = document.getElementById("reserveMemo").value.trim();
+  const tool = selectedReserveTool;
 
-  if (!name || !tool || !date) {
-    showToast("⚠️ 날짜, 이름, 툴을 모두 입력하세요");
+  if (!name || !tool || !startDate || !endDate) {
+    showToast("⚠️ 시작일, 종료일, 이름, 툴을 모두 선택하세요");
     return;
   }
 
-  if (startTime >= endTime) {
-    showToast("⚠️ 종료시간은 시작시간보다 늦어야 합니다");
+  if (startDate > endDate) {
+    showToast("⚠️ 종료일은 시작일보다 빠를 수 없습니다");
     return;
   }
 
@@ -830,7 +886,8 @@ async function submitReservation() {
         action: "reserve",
         name,
         tool,
-        date,
+        startDate,
+        endDate,
         memo
       })
     });
@@ -840,6 +897,7 @@ async function submitReservation() {
     if (data.status === "ok") {
       showToast("✅ 예약 완료");
       document.getElementById("reserveMemo").value = "";
+      selectedReserveTool = "";
       loadReservations();
     } else {
       showToast("⚠️ " + (data.message || "예약 실패"));
@@ -850,7 +908,71 @@ async function submitReservation() {
   }
 }
 
+async function loadReservations() {
+  const startDate = document.getElementById("reserveStartDate")?.value;
+  const endDate = document.getElementById("reserveEndDate")?.value;
 
+  if (!startDate || !endDate || isLoadingReservation) return;
+
+  isLoadingReservation = true;
+  document.getElementById("reservationBoard").innerHTML =
+    '<div class="log-empty"><span class="spinner"></span> 예약을 불러오는 중...</div>';
+
+  try {
+    const res = await fetch(
+      `${GAS_URL}?action=reservations&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`
+    );
+    const data = await res.json();
+    const list = data.reservations || [];
+    reservationData = list;
+
+    const stillValid = reservationData.some(r =>
+      r.tool === selectedReserveTool &&
+      isDateRangeOverlapped(startDate, endDate, r.startDate, r.endDate)
+    );
+    if (stillValid) selectedReserveTool = "";
+
+    renderReserveTools();
+
+    if (!list.length) {
+      document.getElementById("reservationBoard").innerHTML =
+        '<div class="log-empty">예약이 없습니다</div>';
+      return;
+    }
+
+    const rows = list.map(r => `
+      <tr>
+        <td>${r.tool}</td>
+        <td>${r.startDate} ~ ${r.endDate}</td>
+        <td>${r.name}</td>
+        <td>${r.memo || "-"}</td>
+        <td><button class="mini-btn" onclick="cancelReservation('${r.id}')">취소</button></td>
+      </tr>
+    `).join("");
+
+    document.getElementById("reservationBoard").innerHTML = `
+      <div style="overflow-x:auto">
+        <table class="info-table">
+          <thead>
+            <tr>
+              <th>툴</th>
+              <th>예약기간</th>
+              <th>이름</th>
+              <th>메모</th>
+              <th>취소</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  } catch (e) {
+    console.error(e);
+    document.getElementById("reservationBoard").innerHTML =
+      '<div class="log-empty">❌ 예약을 불러올 수 없습니다</div>';
+  } finally {
+    isLoadingReservation = false;
+  }
+}
 
 async function cancelReservation(id) {
   if (!confirm("이 예약을 취소할까요?")) return;
@@ -875,56 +997,6 @@ async function cancelReservation(id) {
   }
 }
 
-async function loadReservations() {
-  const date = document.getElementById("reserveDate")?.value;
-  if (!date || isLoadingReservation) return;
-
-  isLoadingReservation = true;
-  document.getElementById("reservationBoard").innerHTML =
-    '<div class="log-empty"><span class="spinner"></span> 예약을 불러오는 중...</div>';
-
-  try {
-    const res = await fetch(`${GAS_URL}?action=reservations&date=${encodeURIComponent(date)}`);
-    const data = await res.json();
-    const list = data.reservations || [];
-
-    if (!list.length) {
-      document.getElementById("reservationBoard").innerHTML =
-        '<div class="log-empty">예약이 없습니다</div>';
-      return;
-    }
-
-    const rows = list.map(r => `
-      <tr>
-        <td>${r.tool}</td>
-        <td>${r.name}</td>
-        <td>${r.memo || "-"}</td>
-        <td><button class="mini-btn" onclick="cancelReservation('${r.id}')">취소</button></td>
-      </tr>
-    `).join("");
-
-    document.getElementById("reservationBoard").innerHTML = `
-      <div style="overflow-x:auto">
-        <table class="info-table">
-          <thead>
-            <tr>
-              <th>툴</th>
-              <th>이름</th>
-              <th>메모</th>
-              <th>취소</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-  } catch (e) {
-    console.error(e);
-    document.getElementById("reservationBoard").innerHTML =
-      '<div class="log-empty">❌ 예약을 불러올 수 없습니다</div>';
-  } finally {
-    isLoadingReservation = false;
-  }
-}
 async function submitStatus(type) {
   if (!myName) {
     showToast("이름을 선택하세요!");
@@ -1172,19 +1244,14 @@ document.addEventListener("DOMContentLoaded", () => {
   renderToolInfo();
   updateTime();
 
-  const reserveDate = document.getElementById("reserveDate");
-  if (reserveDate) {
-    reserveDate.addEventListener("change", loadReservations);
+  const reserveStartDate = document.getElementById("reserveStartDate");
+  if (reserveStartDate) {
+    reserveStartDate.addEventListener("change", loadReservations);
   }
 
-  const reserveTool = document.getElementById("reserveTool");
-  if (reserveTool) {
-    reserveTool.addEventListener("change", loadReservations);
-  }
-
-  const reserveName = document.getElementById("reserveName");
-  if (reserveName) {
-    reserveName.addEventListener("change", () => {});
+  const reserveEndDate = document.getElementById("reserveEndDate");
+  if (reserveEndDate) {
+    reserveEndDate.addEventListener("change", loadReservations);
   }
 });
 
