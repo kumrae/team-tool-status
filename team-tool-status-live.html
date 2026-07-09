@@ -1,4 +1,4 @@
-해치웠
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -695,8 +695,10 @@ function switchTab(tab) {
 
   if (tab === 'log') loadLog();
   if (tab === 'info') renderToolInfo();
+
   if (tab === 'reserve') {
     initReservationForm();
+    selectedReserveTool = "";
     loadReservations();
   }
 }
@@ -920,28 +922,33 @@ async function loadReservations() {
     '<div class="log-empty"><span class="spinner"></span> 예약을 불러오는 중...</div>';
 
   try {
-    const res = await fetch(
-      `${GAS_URL}?action=reservations&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`
-    );
-    const data = await res.json();
-    const list = data.reservations || [];
-    reservationData = list;
+    const url = `${GAS_URL}?action=reservations&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`;
+    console.log("reservation fetch url:", url);
 
-    const stillValid = reservationData.some(r =>
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log("reservation response:", data);
+
+    reservationData = data.reservations || [];
+
+    const isSelectedNowReserved = reservationData.some(r =>
       r.tool === selectedReserveTool &&
       isDateRangeOverlapped(startDate, endDate, r.startDate, r.endDate)
     );
-    if (stillValid) selectedReserveTool = "";
+
+    if (isSelectedNowReserved) {
+      selectedReserveTool = "";
+    }
 
     renderReserveTools();
 
-    if (!list.length) {
+    if (!reservationData.length) {
       document.getElementById("reservationBoard").innerHTML =
         '<div class="log-empty">예약이 없습니다</div>';
       return;
     }
 
-    const rows = list.map(r => `
+    const rows = reservationData.map(r => `
       <tr>
         <td>${r.tool}</td>
         <td>${r.startDate} ~ ${r.endDate}</td>
@@ -967,7 +974,7 @@ async function loadReservations() {
         </table>
       </div>`;
   } catch (e) {
-    console.error(e);
+    console.error("loadReservations error:", e);
     document.getElementById("reservationBoard").innerHTML =
       '<div class="log-empty">❌ 예약을 불러올 수 없습니다</div>';
   } finally {
@@ -1245,15 +1252,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderToolInfo();
   updateTime();
 
-  const reserveStartDate = document.getElementById("reserveStartDate");
-  if (reserveStartDate) {
-    reserveStartDate.addEventListener("change", loadReservations);
-  }
-
-  const reserveEndDate = document.getElementById("reserveEndDate");
-  if (reserveEndDate) {
-    reserveEndDate.addEventListener("change", loadReservations);
-  }
+  document.getElementById("reserveStartDate")?.addEventListener("change", loadReservations);
+  document.getElementById("reserveEndDate")?.addEventListener("change", loadReservations);
 });
 
 setInterval(loadStatus, 30000);
