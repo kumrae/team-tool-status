@@ -1,4 +1,4 @@
-리얼임2
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -681,7 +681,7 @@ let isSubmitting = false;
 let isLoadingLog = false;
 let isLoadingReservation = false;
 let reservationData = [];
-let selectedReserveTool = "";
+let selectedReserveTools = [];
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -698,7 +698,7 @@ function switchTab(tab) {
 
   if (tab === 'reserve') {
     initReservationForm();
-    selectedReserveTool = "";
+    selectedReserveTools = [];
     loadReservations();
   }
 }
@@ -840,12 +840,12 @@ function renderReserveTools() {
         ${group.tools.map(tool => {
           const reservedBy = reservedTools[tool];
           const isReserved = !!reservedBy;
-          const isSelected = selectedReserveTool === tool && !isReserved;
+          const isSelected = selectedReserveTools.includes(tool) && !isReserved;
 
           return `
             <button
               class="tool-btn ${isReserved ? 'reserved' : ''} ${isSelected ? 'reserve-selected' : ''}"
-              onclick="selectReserveTool('${tool}')"
+              onclick="toggleReserveTool('${tool}')"
               ${isReserved ? 'disabled' : ''}
               title="${isReserved ? reservedBy + ' 예약 중' : ''}"
             >
@@ -859,8 +859,12 @@ function renderReserveTools() {
   `).join("");
 }
 
-function selectReserveTool(tool) {
-  selectedReserveTool = tool;
+function toggleReserveTool(tool) {
+  if (selectedReserveTools.includes(tool)) {
+    selectedReserveTools = selectedReserveTools.filter(t => t !== tool);
+  } else {
+    selectedReserveTools = [...selectedReserveTools, tool];
+  }
   renderReserveTools();
 }
 
@@ -869,9 +873,8 @@ async function submitReservation() {
   const startDate = document.getElementById("reserveStartDate").value;
   const endDate = document.getElementById("reserveEndDate").value;
   const memo = document.getElementById("reserveMemo").value.trim();
-  const tool = selectedReserveTool;
 
-  if (!name || !tool || !startDate || !endDate) {
+  if (!name || !startDate || !endDate || selectedReserveTools.length === 0) {
     showToast("⚠️ 시작일, 종료일, 이름, 툴을 모두 선택하세요");
     return;
   }
@@ -882,34 +885,38 @@ async function submitReservation() {
   }
 
   try {
-    await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({
-        action: "reserve",
-        name,
-        tool,
-        startDate,
-        endDate,
-        memo
-      })
-    });
+    for (const tool of selectedReserveTools) {
+      await fetch(GAS_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "reserve",
+          name,
+          tool,
+          startDate,
+          endDate,
+          memo
+        })
+      });
+    }
 
     await new Promise(r => setTimeout(r, 1200));
     await loadReservations();
 
-    const saved = reservationData.some(r =>
-      String(r.tool).trim() === String(tool).trim() &&
-      String(r.name).trim() === String(name).trim() &&
-      String(r.startDate).trim() === String(startDate).trim() &&
-      String(r.endDate).trim() === String(endDate).trim()
-    );
+    const savedCount = selectedReserveTools.filter(tool =>
+      reservationData.some(r =>
+        String(r.tool).trim() === String(tool).trim() &&
+        String(r.name).trim() === String(name).trim() &&
+        String(r.startDate).trim() === String(startDate).trim() &&
+        String(r.endDate).trim() === String(endDate).trim()
+      )
+    ).length;
 
-    if (saved) {
-      showToast("✅ 예약 완료");
+    if (savedCount > 0) {
+      showToast(`✅ ${savedCount}개 툴 예약 완료`);
       document.getElementById("reserveMemo").value = "";
-      selectedReserveTool = "";
+      selectedReserveTools = [];
       renderReserveTools();
     } else {
       showToast("⚠️ 예약 저장이 반영되지 않았습니다");
@@ -920,7 +927,6 @@ async function submitReservation() {
     showToast("❌ 예약 등록 실패");
   }
 }
-
 async function loadReservations() {
   const startDate = document.getElementById("reserveStartDate")?.value;
   const endDate = document.getElementById("reserveEndDate")?.value;
@@ -941,14 +947,12 @@ async function loadReservations() {
 
     reservationData = data.reservations || [];
 
-    const isSelectedNowReserved = reservationData.some(r =>
-      r.tool === selectedReserveTool &&
+    selectedReserveTools = selectedReserveTools.filter(tool =>
+    !reservationData.some(r =>
+      r.tool === tool &&
       isDateRangeOverlapped(startDate, endDate, r.startDate, r.endDate)
-    );
-
-    if (isSelectedNowReserved) {
-      selectedReserveTool = "";
-    }
+    )
+  );
 
     renderReserveTools();
 
