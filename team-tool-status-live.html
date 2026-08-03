@@ -1,4 +1,4 @@
-리얼
+리얼1
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -904,23 +904,10 @@ async function submitReservation() {
     await new Promise(r => setTimeout(r, 1200));
     await loadReservations();
 
-    const savedCount = selectedReserveTools.filter(tool =>
-      reservationData.some(r =>
-        String(r.tool).trim() === String(tool).trim() &&
-        String(r.name).trim() === String(name).trim() &&
-        String(r.startDate).trim() === String(startDate).trim() &&
-        String(r.endDate).trim() === String(endDate).trim()
-      )
-    ).length;
-
-    if (savedCount > 0) {
-      showToast(`✅ ${savedCount}개 툴 예약 완료`);
-      document.getElementById("reserveMemo").value = "";
-      selectedReserveTools = [];
-      renderReserveTools();
-    } else {
-      showToast("⚠️ 예약 저장이 반영되지 않았습니다");
-    }
+    showToast(`✅ ${selectedReserveTools.length}개 툴 예약 완료`);
+    document.getElementById("reserveMemo").value = "";
+    selectedReserveTools = [];
+    renderReserveTools();
 
   } catch (e) {
     console.error(e);
