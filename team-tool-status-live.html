@@ -1,4 +1,4 @@
-리얼1
+리얼2
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -997,19 +997,21 @@ async function cancelReservation(id) {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ name: myName, tools: myTools, type })
+      body: JSON.stringify({
+        action: "cancelReservation",
+        id
+      })
     });
 
-    isEditing = false;
-    showToast(`✅ ${myName} ${type} 완료!`);
+    showToast("✅ 예약 취소 완료");
 
     setTimeout(() => {
-      loadStatus();
+      loadReservations();
     }, 1000);
 
   } catch (e) {
     console.error(e);
-    showToast("❌ 처리 실패.");
+    showToast("❌ 예약 취소 실패");
   }
 }
 
