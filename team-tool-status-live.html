@@ -1,4 +1,4 @@
-리얼
+리얼1
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1013,7 +1013,40 @@ async function cancelReservation(id) {
   }
 }
 
-await new Promise(r => setTimeout(r, 800));
+async function submitStatus(type) {
+  if (!myName) { showToast("이름을 선택하세요!"); return; }
+  if (isSubmitting) return;
+
+  isSubmitting = true;
+
+  const btn = document.getElementById(type === '출고' ? "submitBtn" : "returnBtn");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>처리 중...';
+
+  try {
+    await fetch(GAS_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ name: myName, tools: myTools, type })
+    });
+
+    isEditing = false;
+    showToast(`✅ ${myName} ${type} 완료!`);
+
+    setTimeout(() => {
+      loadStatus();
+    }, 1200);
+
+  } catch (e) {
+    console.error(e);
+    showToast("❌ 처리 실패.");
+  } finally {
+    isSubmitting = false;
+    btn.disabled = false;
+    btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
+  }
+}
 
 async function loadStatus() {
   if (isLoadingStatus || isSubmitting) return;
