@@ -1,4 +1,4 @@
-리얼
+리얼12
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -997,22 +997,19 @@ async function cancelReservation(id) {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action: "cancelReservation", id })
+      body: JSON.stringify({ name: myName, tools: myTools, type })
     });
 
-    await new Promise(r => setTimeout(r, 800));
-    await loadReservations();
+    isEditing = false;
+    showToast(`✅ ${myName} ${type} 완료!`);
 
-    const stillExists = reservationData.some(r => String(r.id) === String(id));
+    setTimeout(() => {
+      loadStatus();
+    }, 1000);
 
-    if (!stillExists) {
-      showToast("✅ 예약 취소 완료");
-    } else {
-      showToast("⚠️ 예약 취소가 반영되지 않았습니다");
-    }
   } catch (e) {
     console.error(e);
-    showToast("❌ 예약 취소 실패");
+    showToast("❌ 처리 실패.");
   }
 }
 
