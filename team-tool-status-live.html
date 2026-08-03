@@ -1,4 +1,4 @@
-리얼1
+리얼2
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -587,6 +587,10 @@ const TOOL_GROUPS = [
   { label: "NIMBUS / VFV", tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
   { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3"] },
 ];
+  const RESERVE_STATUS_GROUP = {
+  label: "상태 예약",
+  tools: ["검교정/수리/사용불가"]
+};
 const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
 
 const TOOL_INFO = {
@@ -833,7 +837,9 @@ function renderReserveTools() {
     });
   }
 
-  document.getElementById("reserveToolsGrid").innerHTML = TOOL_GROUPS.map(group => `
+  const reserveGroups = [...TOOL_GROUPS, RESERVE_STATUS_GROUP];
+
+  document.getElementById("reserveToolsGrid").innerHTML = reserveGroups.map(group => `
     <div class="tool-group">
       <div class="tool-group-label">${group.label}</div>
       <div class="tools-grid">
