@@ -1,4 +1,4 @@
-리얼2
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -581,16 +581,18 @@ const MEMBERS = ["정철환","정수철","최금래","오현석","정태석","�
 const EXTRA_MEMBERS = ["홍승한","조원주","이윤모","김윤성","이태일","서인석","이재룡","전대수","장승혁","장원석","박수환","최상원"];
 const STATUS_MEMBERS = ["🔧 수리/교정중","⚠️ 점검필요"];
 const ALL_MEMBERS = [...MEMBERS, ...EXTRA_MEMBERS, ...STATUS_MEMBERS];
+const RESERVE_NAME_OPTIONS = [
+  ...MEMBERS,
+  ...EXTRA_MEMBERS,
+  "검교정/수리/사용불가"
+];
 
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","S3","S4","SV1","SV2","SV3","SV4","96MPH"] },
   { label: "NIMBUS / VFV", tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
   { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3"] },
 ];
-  const RESERVE_STATUS_GROUP = {
-  label: "상태 예약",
-  tools: ["검교정/수리/사용불가"]
-};
+
 const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
 
 const TOOL_INFO = {
@@ -740,7 +742,7 @@ function initReservationForm() {
   const endDate = document.getElementById("reserveEndDate");
 
   if (reserveName && reserveName.options.length === 0) {
-    reserveName.innerHTML = [...MEMBERS, ...EXTRA_MEMBERS]
+    reserveName.innerHTML = RESERVE_NAME_OPTIONS
       .map(name => `<option value="${name}">${name}</option>`)
       .join("");
   }
@@ -837,9 +839,7 @@ function renderReserveTools() {
     });
   }
 
-  const reserveGroups = [...TOOL_GROUPS, RESERVE_STATUS_GROUP];
-
-  document.getElementById("reserveToolsGrid").innerHTML = reserveGroups.map(group => `
+  document.getElementById("reserveToolsGrid").innerHTML = TOOL_GROUPS.map(group => `
     <div class="tool-group">
       <div class="tool-group-label">${group.label}</div>
       <div class="tools-grid">
