@@ -882,28 +882,37 @@ async function submitReservation() {
   }
 
   try {
-    const res = await fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: "POST",
-      headers: { "Content-Type": "text/plain" },
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({
         action: "reserve",
         name,
-        tool: selectedReserveTool,
+        tool,
         startDate,
         endDate,
         memo
       })
     });
 
-    const data = await res.json();
+    await new Promise(r => setTimeout(r, 800));
+    await loadReservations();
 
-    if (data.status === "ok") {
+    const saved = reservationData.some(r =>
+      r.tool === tool &&
+      r.name === name &&
+      r.startDate === startDate &&
+      r.endDate === endDate
+    );
+
+    if (saved) {
       showToast("✅ 예약 완료");
       document.getElementById("reserveMemo").value = "";
       selectedReserveTool = "";
-      loadReservations();
+      renderReserveTools();
     } else {
-      showToast("⚠️ " + (data.message || "예약 실패"));
+      showToast("⚠️ 예약 저장이 반영되지 않았습니다");
     }
   } catch (e) {
     console.error(e);
@@ -986,18 +995,22 @@ async function cancelReservation(id) {
   if (!confirm("이 예약을 취소할까요?")) return;
 
   try {
-    const res = await fetch(GAS_URL, {
+    await fetch(GAS_URL, {
       method: "POST",
-      headers: { "Content-Type": "text/plain" },
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({ action: "cancelReservation", id })
     });
 
-    const data = await res.json();
-    if (data.status === "ok") {
+    await new Promise(r => setTimeout(r, 800));
+    await loadReservations();
+
+    const stillExists = reservationData.some(r => String(r.id) === String(id));
+
+    if (!stillExists) {
       showToast("✅ 예약 취소 완료");
-      loadReservations();
     } else {
-      showToast("⚠️ " + (data.message || "예약 취소 실패"));
+      showToast("⚠️ 예약 취소가 반영되지 않았습니다");
     }
   } catch (e) {
     console.error(e);
