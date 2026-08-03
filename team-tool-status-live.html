@@ -1,4 +1,4 @@
-리얼12
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1013,45 +1013,7 @@ async function cancelReservation(id) {
   }
 }
 
-async function submitStatus(type) {
-  if (!myName) { showToast("이름을 선택하세요!"); return; }
-  if (isSubmitting) return;
-
-  isSubmitting = true;
-
-  const btn = document.getElementById(type === '출고' ? "submitBtn" : "returnBtn");
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>처리 중...';
-
-  try {
-    await fetch(GAS_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ name: myName, tools: myTools, type })
-    });
-
-    await new Promise(r => setTimeout(r, 800));
-    await loadStatus();
-
-    const savedTools = boardData[myName] || [];
-    const same = JSON.stringify([...savedTools].sort()) === JSON.stringify([...myTools].sort());
-
-    if (same) {
-      isEditing = false;
-      showToast(`✅ ${myName} ${type} 완료!`);
-    } else {
-      showToast("⚠️ 저장이 반영되지 않았습니다. 배포 URL/권한을 확인하세요.");
-    }
-  } catch (e) {
-    console.error(e);
-    showToast("❌ 처리 실패.");
-  } finally {
-    isSubmitting = false;
-    btn.disabled = false;
-    btn.innerHTML = type === '출고' ? "📤 출고" : "📥 반납";
-  }
-}
+await new Promise(r => setTimeout(r, 800));
 
 async function loadStatus() {
   if (isLoadingStatus || isSubmitting) return;
