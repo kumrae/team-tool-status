@@ -1,4 +1,4 @@
-
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -566,6 +566,7 @@ input, select, button {
       <button class="name-btn" onclick="selectToolTab('J1')" id="tab-J1">J1</button>
       <button class="name-btn" onclick="selectToolTab('J2')" id="tab-J2">J2</button>
       <button class="name-btn" onclick="selectToolTab('J3')" id="tab-J3">J3</button>
+      <button class="name-btn" onclick="selectToolTab('J4')" id="tab-J4">J4</button>
     </div>
 
     <div id="toolInfoBoard"></div>
@@ -590,7 +591,7 @@ const RESERVE_NAME_OPTIONS = [
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","S3","S4","SV1","SV2","SV3","SV4","96MPH"] },
   { label: "NIMBUS / VFV", tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
-  { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3"] },
+  { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3","J4"] },
 ];
 
 const TOOLS = TOOL_GROUPS.flatMap(g => g.tools);
@@ -673,7 +674,10 @@ const TOOL_INFO = {
     { name:"Jamaica", sn:"BR000738", 교정일:"2025.09.15", 유효기간:"2026.09.15" },
   ],
   "J3": [
-    { name:"Jamaica", sn:"-", 교정일:"-", 유효기간:"-" },
+    { name:"Jamaica", sn:"BR000524", 교정일:"2025.12.24", 유효기간:"2026.12.24" },
+  ],
+  "J4": [
+    { name:"Jamaica", sn:"BR000486", 교정일:"2026.07.01", 유효기간:"2027.07.01" },
   ],
 };
 
