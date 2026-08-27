@@ -1,4 +1,4 @@
-리얼2
+리얼
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1163,9 +1163,7 @@ async function loadLog() {
         : '<span style="color:#bbb">없음</span>';
 
       const returnedTools = row[4] && row[4] !== '없음'
-        ? row[4].split(', ').map(t =>
-            `<span class="log-tool-tag" style="background:#fff0f0;color:#e53e3e">${t}</span>`
-          ).join('')
+        ? row[4].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
         : '<span style="color:#ddd">-</span>';
 
       const typeLabel =
@@ -1182,7 +1180,7 @@ async function loadLog() {
         <td><strong>${row[1]}</strong></td>
         <td>${typeLabel}</td>
         <td style="width:160px">${tools}</td>
-        <td style="width:160px;background:#fffaf9">${row[3] === '반납' ? returnedTools : '<span style="color:#ddd">-</span>'}</td>
+        <td style="width:160px">${row[3] === '반납' ? returnedTools : '<span style="color:#ddd">-</span>'}</td>
       </tr>`;
     }).join('');
 
@@ -1197,7 +1195,7 @@ async function loadLog() {
             <col style="width:160px">
           </colgroup>
           <thead>
-            <tr><th>시간</th><th>이름</th><th>구분</th><th>보유 툴</th><th style="color:#e53e3e">반납한 툴</th></tr>
+            <tr><th>시간</th><th>이름</th><th>구분</th><th>보유 툴</th><th>반납한 툴</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
