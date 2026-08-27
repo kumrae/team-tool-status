@@ -1,4 +1,4 @@
-리얼
+리얼1
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1162,6 +1162,12 @@ async function loadLog() {
         ? row[2].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
         : '<span style="color:#bbb">없음</span>';
 
+      const returnedTools = row[4] && row[4] !== '없음'
+        ? row[4].split(', ').map(t =>
+            `<span class="log-tool-tag" style="background:#fff0f0;color:#e53e3e">${t}</span>`
+          ).join('')
+        : '<span style="color:#ddd">-</span>';
+
       const typeLabel =
       row[3] === '출고'
         ? `<span style="background:#e6f7f4;color:#0d7c6e;border-radius:100px;padding:2px 10px;font-size:0.8rem;font-weight:700">📤 출고</span>`
@@ -1176,6 +1182,7 @@ async function loadLog() {
         <td><strong>${row[1]}</strong></td>
         <td>${typeLabel}</td>
         <td>${tools}</td>
+        <td>${row[3] === '반납' ? returnedTools : '<span style="color:#ddd">-</span>'}</td>
       </tr>`;
     }).join('');
 
@@ -1183,7 +1190,7 @@ async function loadLog() {
       <div style="overflow-x:auto">
         <table class="log-table">
           <thead>
-            <tr><th>시간</th><th>이름</th><th>구분</th><th>사용 툴</th></tr>
+            <tr><th>시간</th><th>이름</th><th>구분</th><th>보유 툴(변경 후)</th><th>반납한 툴</th></tr>
           </thead>
           <tbody>${rows}</tbody>
         </table>
