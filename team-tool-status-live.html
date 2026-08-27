@@ -1,4 +1,4 @@
-리얼
+리얼1
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1163,7 +1163,9 @@ async function loadLog() {
         : '<span style="color:#bbb">없음</span>';
 
       const returnedTools = row[4] && row[4] !== '없음'
-        ? row[4].split(', ').map(t => `<span class="log-tool-tag">${t}</span>`).join('')
+        ? row[4].split(', ').map(t =>
+            `<span class="log-tool-tag" style="background:#fff0f0;color:#e53e3e">${t}</span>`
+          ).join('')
         : '<span style="color:#ddd">-</span>';
 
       const typeLabel =
