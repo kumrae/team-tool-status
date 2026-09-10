@@ -1,4 +1,4 @@
-리얼1
+찐
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -262,31 +262,65 @@ input, select, button {
   font-weight: 600;
 }
 
+/* ========== 가이드 박스 강조 (수정된 부분) ========== */
+
 .guide {
-  background: linear-gradient(135deg, #fff3cd 0%, #fff 100%);
+  position: relative;
+  background: #fffbeb;
   border: 2px solid #f59e0b;
-  border-left: 6px solid #f59e0b;
   border-radius: 12px;
-  padding: 14px 16px;
+  padding: 14px 16px 14px 56px; /* 왼쪽 여백을 넓게 */
   font-size: 0.95rem;
   color: #7c2d12;
   margin-bottom: 16px;
   line-height: 1.6;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
   display: flex;
   align-items: center;
   gap: 12px;
+  overflow: hidden;
+}
+
+/* 왼쪽 세로 띠 */
+.guide::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+  background: linear-gradient(180deg, #f59e0b, #d97706);
+}
+
+/* “안내” 라벨 */
+.guide::after {
+  content: "안내";
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%) rotate(-90deg);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #fff;
+  background: #d97706;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  opacity: 0.95;
 }
 
 .guide-icon {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   flex-shrink: 0;
+  margin-left: 6px;
 }
 
 .guide-text strong {
   color: #b45309;
   font-weight: 800;
 }
+
+/* ========== 가이드 박스 강조 끝 ========== */
 
 .log-refresh-btn {
   width: 100%;
@@ -484,11 +518,11 @@ input, select, button {
 
 <div id="mainSection">
   <div class="guide">
-  <div class="guide-icon">🔄</div>
-  <div class="guide-text">
-    <strong>반납 시:</strong> 해당 툴 활성화 해제 → 반납
+    <div class="guide-icon">⚠️</div>
+    <div class="guide-text">
+      <strong>반납 시:</strong> 해당 툴 활성화 해제 → 반납
+    </div>
   </div>
-</div>
 
   <div class="card">
     <h2>👤 내 이름</h2>
@@ -512,7 +546,7 @@ input, select, button {
   <button class="reset-btn" onclick="resetMyStatus()">🔄 내 상태 초기화</button>
 
   <div class="card">
-    <h2>📊 팀 현황판 <span style="font-size:0.8rem;color:#aaa;font-weight:400;margin-left:6px">30초마다 자동갱신</span></h2>
+    <h2>📊 팀 현황판 <span style="font-size:0.8rem;color:#aaa;font-weight:400;margin-left:6px">30 초마다 자동갱신</span></h2>
     <div id="statusBoard"><div class="loading"><span class="spinner"></span> 불러오는 중...</div></div>
   </div>
 </div>
@@ -607,7 +641,7 @@ const RESERVE_NAME_OPTIONS = [
 
 const TOOL_GROUPS = [
   { label: "STARlet / VFV", tools: ["S1","S2","S3","S4","SV1","SV2","SV3","SV4","96MPH"] },
-  { label: "NIMBUS / VFV", tools: ["N1구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
+  { label: "NIMBUS / VFV", tools: ["N1 구형","N2","N3","N4","N5","NV1","NV2","NV3"] },
   { label: "CFX96", tools: ["D1","D2","D3","D4","D5","D6","J1","J2","J3","J4"] },
 ];
 
@@ -941,6 +975,7 @@ async function submitReservation() {
     showToast("❌ 예약 등록 실패");
   }
 }
+
 async function loadReservations() {
   const startDate = document.getElementById("reserveStartDate")?.value;
   const endDate = document.getElementById("reserveEndDate")?.value;
